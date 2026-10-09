@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { DEFAULT_FILTERS, matchesFilters } from '../src/utils/marketplace.ts';
+const now = Date.now();
+const live = { currentBid: 100, condition: 'Like New', buyItNowPrice: 150, status: 'active', endTime: new Date(now + 60000).toISOString(), seller: { id: 'seller-a' } };
+assert.equal(matchesFilters(live, DEFAULT_FILTERS, now), true);
+assert.equal(matchesFilters(live, { ...DEFAULT_FILTERS, minPrice: '101' }, now), false);
+assert.equal(matchesFilters(live, { ...DEFAULT_FILTERS, minPrice: '100', maxPrice: '100' }, now), true);
+assert.equal(matchesFilters(live, { ...DEFAULT_FILTERS, condition: 'Brand New' }, now), false);
+assert.equal(matchesFilters(live, { ...DEFAULT_FILTERS, seller: 'seller-b' }, now), false);
+assert.equal(matchesFilters({ ...live, buyItNowPrice: undefined }, { ...DEFAULT_FILTERS, buying: 'buyNow' }, now), false);
+const expired = { ...live, endTime: new Date(now - 1000).toISOString() };
+assert.equal(matchesFilters(expired, DEFAULT_FILTERS, now), false);
+assert.equal(matchesFilters(expired, { ...DEFAULT_FILTERS, status: 'ended' }, now), true);
+assert.equal(matchesFilters(expired, { ...DEFAULT_FILTERS, status: 'All' }, now), true);
+assert.equal(matchesFilters(expired, { ...DEFAULT_FILTERS, status: 'All', buying: 'buyNow' }, now), false);
+console.log('10 marketplace filtering checks passed.');
