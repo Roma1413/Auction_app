@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import confetti from 'canvas-confetti';
 import { io, Socket } from 'socket.io-client';
 import type { AuctionItem, UserProfile, BidHistoryEntry } from '../types/auction';
@@ -29,10 +29,13 @@ interface AuctionContextType {
   placeBid: (auctionId: string, amount: number) => Promise<ActionResult>;
   buyItNow: (auctionId: string) => Promise<ActionResult>;
   toggleWatchlist: (auctionId: string) => void;
-  createAuction: (newAuctionData: Omit<AuctionItem, 'id' | 'seller' | 'currentBid' | 'bidCount' | 'status' | 'bids' | 'startTime'>) => void;
+  createAuction: (newAuctionData: Omit<AuctionItem, 'id' | 'seller' | 'currentBid' | 'bidCount' | 'status' | 'bids' | 'startTime'>) => Promise<void>;
   liveNotifications: { id: string; message: string; timestamp: string }[];
   clearNotifications: () => void;
   isBackendConnected: boolean;
+  isLoading: boolean;
+  loadError: string;
+  refreshAuctions: () => Promise<void>;
   authenticate: (email: string, password: string, name?: string) => Promise<ActionResult>;
   logout: () => void;
 }
@@ -59,6 +62,14 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [liveNotifications, setLiveNotifications] = useState<{ id: string; message: string; timestamp: string }[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const refreshAuctions = useCallback(async () => {
+    setIsLoading(true);
+    try { setAuctions(await request('/auctions')); setLoadError(''); }
+    catch { setLoadError('Could not load listings. Check your connection and try again.'); }
+    finally { setIsLoading(false); }
+  }, []);
 
   // Initialize Socket.io connection and REST API sync
   useEffect(() => {
@@ -70,6 +81,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     newSocket.on('connect', () => {
       console.log('✅ Connected to backend WebSocket server!');
       request("/health").then(() => setIsBackendConnected(true)).catch(() => setIsBackendConnected(false));
+      void refreshAuctions();
     });
 
     newSocket.on('disconnect', () => {
@@ -82,7 +94,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       setLiveNotifications(prev => [
         {
           id: `notif-${Date.now()}`,
-          message: `⚡ Backend WebSocket Alert: New high bid of $${data.amount.toLocaleString()} on "${data.title.slice(0, 30)}..." by ${data.bidderName}`,
+          message: `New high bid of $${data.amount.toLocaleString()} on "${data.title}" by ${data.bidderName}`,
           timestamp: new Date().toLocaleTimeString()
         },
         ...prev.slice(0, 4)
@@ -123,13 +135,13 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     setSocket(newSocket);
 
-    request('/auctions').then(setAuctions).catch(() => setIsBackendConnected(false));
+    void refreshAuctions();
     if (localStorage.getItem('auction-token')) request('/auth/me').then(data => setUser(data.user)).catch(() => localStorage.removeItem('auction-token'));
 
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [refreshAuctions]);
 
   // Subscribe selected item to Socket room
   useEffect(() => {
@@ -161,12 +173,12 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
   const logout = () => { localStorage.removeItem('auction-token'); setUser(INITIAL_USER); };
   const saveAction = async (path: string, body?: unknown): Promise<ActionResult> => {
-    if (!user.id) return { success: false, message: 'Please sign in first.' };
+    if (!user.id) { window.dispatchEvent(new Event('auction-sign-in')); return { success: false, message: 'Please sign in first.' }; }
     try {
       const data = await request(path, 'POST', body);
       setAuctions(prev => prev.map(auction => auction.id === data.auction.id ? data.auction : auction));
-      const profile = await request('/auth/me');
-      setUser(profile.user);
+      try { const profile = await request('/auth/me'); setUser(profile.user); }
+      catch { notify('Your action succeeded, but account activity could not refresh.'); }
       confetti({ particleCount: 60, spread: 60 });
       return { success: true, message: data.message };
     } catch (error) { return { success: false, message: (error as Error).message }; }
@@ -174,7 +186,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   const placeBid = (auctionId: string, amount: number) => saveAction('/auctions/' + auctionId + '/bid', { amount });
   const buyItNow = (auctionId: string) => saveAction('/auctions/' + auctionId + '/buy-now');
   const toggleWatchlist = async (auctionId: string) => {
-    if (!user.id) { notify('Please sign in first.'); return; }
+    if (!user.id) { window.dispatchEvent(new Event('auction-sign-in')); return; }
     try {
       const data = await request('/user/watchlist/' + auctionId, 'POST');
       setUser(prev => ({ ...prev, watchlist: data.watched ? Array.from(new Set([...prev.watchlist, auctionId])) : prev.watchlist.filter(id => id !== auctionId) }));
@@ -211,6 +223,9 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       liveNotifications,
       clearNotifications,
       isBackendConnected,
+      isLoading,
+      loadError,
+      refreshAuctions,
       authenticate,
       logout
     }}>

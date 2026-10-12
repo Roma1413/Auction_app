@@ -45,13 +45,17 @@ The local Vite server proxies /api and /socket.io to localhost:4000. For hosting
 
 ## Marketplace features
 
-- Redesigned sign-in and registration with password visibility and guest browsing.
+- Marketplace-first design in ivory and forest green, with responsive navigation and a featured listing.
+- Sign-in and registration open from the header in a dialog with password visibility, keyboard focus containment, Escape dismissal, and guest browsing.
 - Price, condition, buying-format, availability, and seller filters.
 - Saved searches including filters and sort order, stored on this device.
 - Recently viewed items, stored on this device with a clear-history option.
 - Seller shops accessible from listing details.
 - Account hub for watchlists, active bids, selling, and purchases/wins.
 - Expired listings disable bidding; use Availability → All listings to browse past listings.
+- Ending within an hour filter updates as time passes; buy-now price filters use the purchase price.
+- Listing loading errors offer a retry, and reconnecting refreshes auction data.
+- New listings default to three days, validate pricing, and prevent repeated publish submissions.
 
 Run `node --experimental-strip-types tests/marketplace.mjs` for the filter checks.
 Payment processing, shipping fulfillment, seller reviews, and buyer protection are not implemented.

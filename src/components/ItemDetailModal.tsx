@@ -1,3 +1,4 @@
+import { useNow } from '../utils/useNow';
 import React, { useState } from 'react';
 import { 
   X, 
@@ -22,6 +23,7 @@ interface ItemDetailModalProps {
 }
 
 export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose }) => {
+  const now = useNow();
   const { user, toggleWatchlist, placeBid, buyItNow, auctions, setSelectedItem } = useAuction();
   
   const [showSeller, setShowSeller] = useState(false);
@@ -32,7 +34,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose 
   const isWatched = user.watchlist.includes(item.id);
   const isHighestBidder = item.bids.length > 0 && item.bids[0].bidderId === user.id;
 
-  const isActive = item.status === 'active' && new Date(item.endTime).getTime() > Date.now();
+  const isActive = item.status === 'active' && new Date(item.endTime).getTime() > now;
   const minBidAllowed = item.currentBid + (item.currentBid < 1000 ? 50 : 250);
 
   const handlePlaceBid = async (amountToBid?: number) => {

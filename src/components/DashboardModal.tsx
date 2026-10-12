@@ -1,3 +1,4 @@
+import { useNow } from '../utils/useNow';
 import { useState } from 'react';
 import { X, Heart, Gavel, Package, Trophy, ArrowUpRight } from 'lucide-react';
 import { useAuction } from '../context/AuctionContext';
@@ -7,9 +8,10 @@ import { CountdownTimer } from './CountdownTimer';
 type Tab = 'watchlist' | 'bids' | 'listings' | 'won';
 interface DashboardModalProps { initialTab?: Tab; onClose: () => void; onSelectItem: (item: AuctionItem) => void }
 export function DashboardModal({ initialTab = 'watchlist', onClose, onSelectItem }: DashboardModalProps) {
+  const now = useNow();
   const { user, auctions, toggleWatchlist } = useAuction();
   const [tab, setTab] = useState<Tab>(initialTab);
-  const active = (a: AuctionItem) => a.status === 'active' && new Date(a.endTime).getTime() > Date.now();
+  const active = (a: AuctionItem) => a.status === 'active' && new Date(a.endTime).getTime() > now;
   const won = (a: AuctionItem) => !active(a) && a.bids[0]?.bidderId === user.id && (a.status === 'sold' || !a.reservePrice || a.currentBid >= a.reservePrice);
   const groups = { watchlist: auctions.filter(a => user.watchlist.includes(a.id)), bids: auctions.filter(a => user.biddedItemIds.includes(a.id) && active(a)), listings: auctions.filter(a => a.seller.id === user.id && !!user.id), won: auctions.filter(a => !!user.id && won(a)) };
   const tabs = [{ id: 'watchlist' as const, label: 'Watchlist', icon: Heart }, { id: 'bids' as const, label: 'Active bids', icon: Gavel }, { id: 'listings' as const, label: 'Selling', icon: Package }, { id: 'won' as const, label: 'Purchases & wins', icon: Trophy }];

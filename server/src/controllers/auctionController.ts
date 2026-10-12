@@ -117,6 +117,13 @@ export async function createAuction(req: AuthRequest, res: Response) {
     }
 
     const startVal = parseFloat(startingPrice);
+    if (!Number.isFinite(startVal) || startVal <= 0 ||
+        !Number.isFinite(new Date(endTime).getTime()) || new Date(endTime) <= new Date() ||
+        (reservePrice != null && (!Number.isFinite(Number(reservePrice)) || Number(reservePrice) < startVal)) ||
+        (buyItNowPrice != null && (!Number.isFinite(Number(buyItNowPrice)) || Number(buyItNowPrice) < Math.max(startVal, Number(reservePrice) || 0))) ||
+        (shippingCost != null && (!Number.isFinite(Number(shippingCost)) || Number(shippingCost) < 0))) {
+      return res.status(400).json({ message: 'Use positive prices, a future end time, and reserve/buy-now prices at least as high as the starting price.' });
+    }
 
     const newAuction = await prisma.auction.create({
       data: {
@@ -134,7 +141,7 @@ export async function createAuction(req: AuthRequest, res: Response) {
         endTime: new Date(endTime),
         status: 'active',
         location: location || 'New York, NY, USA',
-        shippingCost: shippingCost ? parseFloat(shippingCost) : 20.0,
+        shippingCost: shippingCost != null ? Number(shippingCost) : 20.0,
         specs: specs ? JSON.stringify(specs) : null,
         sellerId: userId
       },
@@ -187,7 +194,7 @@ export async function placeBid(req: AuthRequest, res: Response) {
         data: {
           auctionId: target.id,
           bidderId: user.id,
-          bidderName: user.name + ' (You)',
+          bidderName: user.name,
           amount: bidAmount
         }
       });

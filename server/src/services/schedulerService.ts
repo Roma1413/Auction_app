@@ -24,18 +24,19 @@ export function startAuctionScheduler(io: Server) {
       });
 
       for (const auc of endedAuctions) {
-        const winningBid = auc.bids[0];
-        const newStatus = winningBid ? 'ended' : 'ended';
+        const highestBid = auc.bids[0];
+        const winningBid = highestBid && (!auc.reservePrice || highestBid.amount >= auc.reservePrice) ? highestBid : null;
 
-        await prisma.auction.update({
-          where: { id: auc.id },
-          data: { status: newStatus }
+        const changed = await prisma.auction.updateMany({
+          where: { id: auc.id, status: 'active', endTime: { lte: now } },
+          data: { status: 'ended' }
         });
+        if (changed.count !== 1) continue;
 
         console.log(`🏁 Auction ended: "${auc.title}" (Winner: ${winningBid ? winningBid.bidderName : 'None'})`);
 
         // Emit Socket.io notification to auction room
-        io.to(`auction:${auc.id}`).emit('auction-ended', {
+        io.emit('auction-ended', {
           auctionId: auc.id,
           winner: winningBid ? { bidderName: winningBid.bidderName, amount: winningBid.amount } : null,
           title: auc.title

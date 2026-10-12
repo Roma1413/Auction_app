@@ -17,7 +17,8 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
   const [startingPrice, setStartingPrice] = useState('');
   const [reservePrice, setReservePrice] = useState('');
   const [buyItNowPrice, setBuyItNowPrice] = useState('');
-  const [duration, setDuration] = useState('5m'); // Default 5 mins for quick test!
+  const [duration, setDuration] = useState('3d');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [location] = useState('New York, NY, USA');
   const [description, setDescription] = useState('');
@@ -30,9 +31,9 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
     { label: 'Camera Lens', url: 'https://images.unsplash.com/photo-1617005082133-548c4dd27f35?q=80&w=1000' }
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !startingPrice || !description) return;
+    if (isSubmitting || !title.trim() || !startingPrice || !description.trim()) return;
 
     const startVal = parseFloat(startingPrice);
     const finalImg = imageUrl || presets[0].url;
@@ -47,7 +48,8 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
     else if (duration === '3d') endTimeDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
     else if (duration === '7d') endTimeDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    createAuction({
+    setIsSubmitting(true);
+    try { await createAuction({
       title,
       subtitle: subtitle || undefined,
       category,
@@ -60,7 +62,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
       description,
       location,
       shippingCost: 20
-    });
+    }); } finally { setIsSubmitting(false); }
   };
 
   return (
@@ -157,6 +159,8 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
                   type="number"
                   required
                   placeholder="50"
+                  min="0.01"
+                  step="0.01"
                   value={startingPrice}
                   onChange={(e) => setStartingPrice(e.target.value)}
                   className="w-full bg-white border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-900 focus:outline-hidden"
@@ -170,6 +174,8 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
                 <input
                   type="number"
                   placeholder="Optional min"
+                  min={startingPrice || '0.01'}
+                  step="0.01"
                   value={reservePrice}
                   onChange={(e) => setReservePrice(e.target.value)}
                   className="w-full bg-white border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-900 focus:outline-hidden"
@@ -183,6 +189,8 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
                 <input
                   type="number"
                   placeholder="Optional fixed"
+                  min={reservePrice || startingPrice || '0.01'}
+                  step="0.01"
                   value={buyItNowPrice}
                   onChange={(e) => setBuyItNowPrice(e.target.value)}
                   className="w-full bg-white border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-900 focus:outline-hidden"
@@ -278,9 +286,10 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-emerald-600/20 transition-all"
             >
-              🚀 Publish Live Auction
+              {isSubmitting ? 'Publishing…' : 'Publish Live Auction'}
             </button>
           </div>
 

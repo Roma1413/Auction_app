@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
+import { useNow } from '../utils/useNow';
 import { 
   SearchX, 
-  PlusCircle,
   SlidersHorizontal,
-  Flame,
-  ShieldCheck,
-  Zap
+  ArrowUpRight,
+  ArrowRight
 } from 'lucide-react';
 import { useAuction } from '../context/AuctionContext';
 import type { AuctionItem } from '../types/auction';
@@ -20,7 +19,8 @@ interface MainFeedProps {
 }
 
 export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
-  const { auctions, activeCategory, searchQuery, setSearchQuery, setActiveCategory, setIsCreateModalOpen } = useAuction();
+  const { auctions, activeCategory, searchQuery, setSearchQuery, setActiveCategory, setIsCreateModalOpen, isLoading, loadError, refreshAuctions } = useAuction();
+  const now = useNow();
 
   const [sortBy, setSortBy] = useState<'endingSoon' | 'mostBids' | 'newest' | 'priceHigh' | 'priceLow'>('endingSoon');
 
@@ -29,6 +29,7 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
   const update = (key: keyof MarketplaceFilters, value: string) => setFilters(prev => ({ ...prev, [key]: value }));
   const persistSearches = (next: SavedSearch[]) => { setSearches(next); localStorage.setItem('auction-searches', JSON.stringify(next)); };
   const saveSearch = () => persistSearches([{ id: crypto.randomUUID(), query: searchQuery, category: activeCategory, filters: { ...filters }, sort: sortBy }, ...searches].slice(0, 8));
+  const featured = auctions.find(item => item.featured) || auctions[0];
   const sellers = [...new Map(auctions.map(a => [a.seller.id, a.seller])).values()];
   // Filter items by activeCategory and searchQuery
   const filteredAuctions = auctions.filter(item => {
@@ -38,7 +39,7 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
       item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.category.toLowerCase().includes(searchQuery.toLowerCase());
     
-    return matchesCategory && matchesSearch && matchesFilters(item, filters);
+    return matchesCategory && matchesSearch && matchesFilters(item, filters, now);
   });
 
   // Sort items
@@ -62,55 +63,32 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
   });
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    <main className="market-main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
       
-      {/* Hero Banner Section */}
-      <div className="relative rounded-3xl bg-slate-900 text-white overflow-hidden p-6 sm:p-10 shadow-2xl border border-slate-800">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-500/30 text-blue-300 text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md">
-            <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span>GOOD FINDS. GREAT POSSIBILITIES.</span>
+      <section className="market-hero" aria-label="Discover the marketplace">
+        <div className="hero-copy">
+          <span className="hero-eyebrow"><span/> THE NEXT CHAPTER STARTS WITH YOU</span>
+          <h1>Good things.<br/><em>Great finds.</em></h1>
+          <p>Extraordinary objects, everyday discoveries. Find something you love and make it yours.</p>
+          <div className="hero-actions">
+            <button className="hero-explore" onClick={() => document.getElementById('marketplace-results')?.scrollIntoView({behavior:'smooth',block:'start'})}>Explore the marketplace<ArrowRight size={18}/></button>
+            <button className="hero-sell" onClick={() => setIsCreateModalOpen(true)}>Have something to sell?<ArrowUpRight size={16}/></button>
           </div>
-
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white">
-            Bid, Sell & Win <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-violet-400 bg-clip-text text-transparent">Rare Items</span> in Real-Time
-          </h1>
-
-          <p className="text-sm text-slate-300 leading-relaxed">
-            Discover something worth bidding for. Explore unique listings, save your favorites, or give your own treasures a new home.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-6 py-3 rounded-2xl text-xs flex items-center gap-2 shadow-lg shadow-blue-600/30 transition-all hover:scale-105"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>List your first item</span>
-            </button>
-
-            <div className="flex items-center gap-4 text-xs font-semibold text-slate-300 pl-2">
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Browse seller listings
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-amber-400" /> Live bidding
-              </span>
-            </div>
-          </div>
+          <div className="hero-foot"><span>01 / DISCOVER</span><span>02 / BID</span><span>03 / MAKE IT YOURS</span></div>
         </div>
-      </div>
-
+        <div className="hero-showcase">
+          <span className="showcase-caption">OBJECTS WORTH A SECOND LOOK</span>
+          {featured ? <button className="showcase-object" onClick={() => onSelectItem(featured)} aria-label={`Explore ${featured.title}`}><img src={featured.images[0]} alt={featured.title}/><span className="showcase-info"><span><small>{featured.category}</small><strong>{featured.title}</strong></span><span className="showcase-arrow"><ArrowUpRight size={23}/></span></span></button> : <div className="showcase-placeholder"><SearchX size={52} strokeWidth={1}/><span>Your next discovery awaits.</span></div>}
+          <span className="showcase-stamp">A NEW HOME.<br/>A NEW STORY.</span>
+        </div>
+      </section>
       {/* Filter and Sorting Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+      <div id="marketplace-results" className="results-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
           <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <span>{activeCategory} Auctions</span>
+            <span>{activeCategory === 'All' ? 'The marketplace' : activeCategory}</span>
             <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
-              {sortedAuctions.length} available
+              {sortedAuctions.length} listings
             </span>
           </h2>
           {searchQuery && (
@@ -129,16 +107,17 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
             onChange={(e) => setSortBy(e.target.value as any)}
             className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-hidden cursor-pointer shadow-xs"
           >
-            <option value="endingSoon">⏰ Ending Soonest</option>
-            <option value="mostBids">🔥 Most Bids</option>
-            <option value="newest">✨ Newly Listed</option>
-            <option value="priceHigh">💎 Price: High to Low</option>
-            <option value="priceLow">🏷️ Price: Low to High</option>
+            <option value="endingSoon">Ending soonest</option>
+            <option value="mostBids">Most bids</option>
+            <option value="newest">Newly listed</option>
+            <option value="priceHigh">Price: high to low</option>
+            <option value="priceLow">Price: low to high</option>
           </select>
         </div>
       </div>
 
       <section className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4" aria-label="Marketplace filters">
+        <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={filters.endingWithin === '60'} onChange={e => update('endingWithin', e.target.checked ? '60' : '')}/> Ending within an hour</label>
         <div className="flex justify-between items-center"><h3 className="font-bold text-sm flex items-center gap-2"><SlidersHorizontal size={16}/> Find it your way</h3><button className="text-xs text-slate-500 flex gap-1 items-center" onClick={() => {setFilters(DEFAULT_FILTERS);setSearchQuery('');setActiveCategory('All');}}><RotateCcw size={13}/> Reset</button></div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           <label className="text-xs text-slate-500">Minimum price<input aria-label="Minimum price" type="number" min="0" value={filters.minPrice} onChange={e => update('minPrice',e.target.value)} placeholder="$ 0" className="w-full border border-slate-200 rounded-lg p-2 mt-1 text-slate-900"/></label>
@@ -152,13 +131,14 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
         <div className="flex flex-wrap gap-2 items-center border-t border-slate-100 pt-3"><button onClick={saveSearch} className="flex items-center gap-2 rounded-full bg-slate-900 text-white px-3 py-2 text-xs"><BookmarkPlus size={14}/> Save this search</button><span className="text-[10px] text-slate-400">Saved on this device</span>{searches.map(saved => <div className="flex items-center rounded-full bg-slate-100 text-xs" key={saved.id}><button className="px-3 py-2" onClick={() => {setSearchQuery(saved.query);setActiveCategory(saved.category);setFilters(saved.filters);setSortBy(saved.sort);}}>{saved.query || saved.category}{saved.filters.buying === 'buyNow' ? ' · Buy now' : ''}</button><button className="pr-2" aria-label="Remove saved search" onClick={() => persistSearches(searches.filter(s => s.id !== saved.id))}><X size={12}/></button></div>)}</div>
       </section>
       {/* Grid of Auctions */}
-      {sortedAuctions.length === 0 ? (
+      {loadError ? <div role="alert" className="bg-rose-50 border border-rose-200 rounded-2xl p-8 text-center"><p>{loadError}</p><button disabled={isLoading} onClick={() => void refreshAuctions()} className="mt-4 bg-slate-900 text-white rounded-xl px-4 py-2 disabled:opacity-50">{isLoading ? 'Retrying…' : 'Try again'}</button></div> : isLoading && auctions.length === 0 ? <p role="status" className="p-12 text-center text-slate-500">Loading listings…</p> : sortedAuctions.length === 0 ? (
         <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-4">
           <SearchX className="w-12 h-12 text-slate-300 mx-auto" />
           <h3 className="text-base font-bold text-slate-900">No auctions match your filters</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             Try adjusting your search query or selecting a different category to view active listings.
           </p>
+          <button onClick={() => { setFilters({ ...DEFAULT_FILTERS, status: 'All' }); setSearchQuery(''); setActiveCategory('All'); }} className="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white">Browse all listings, including completed auctions</button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -173,7 +153,7 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
       )}
 
       {/* Bottom CTA Box */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 rounded-3xl p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="seller-banner rounded-3xl p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="space-y-1">
           <h3 className="text-xl font-black">Got something to sell?</h3>
           <p className="text-xs text-emerald-100 max-w-lg">

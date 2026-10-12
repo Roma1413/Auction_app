@@ -1,3 +1,4 @@
+import { useNow } from '../utils/useNow';
 import React, { useState } from 'react';
 import { 
   Heart, 
@@ -19,6 +20,7 @@ interface AuctionCardProps {
 }
 
 export const AuctionCard: React.FC<AuctionCardProps> = ({ item, onSelect }) => {
+  const now = useNow();
   const { user, toggleWatchlist, placeBid } = useAuction();
   const isWatched = user.watchlist.includes(item.id);
   const isUserHighestBidder = item.bids.length > 0 && item.bids[0].bidderId === user.id;
@@ -42,7 +44,7 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ item, onSelect }) => {
   return (
     <div 
       onClick={() => onSelect(item)}
-      className="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col cursor-pointer relative"
+      className="auction-card group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col cursor-pointer relative"
     >
       {/* Image Header Container */}
       <div className="relative aspect-4/3 bg-slate-100 overflow-hidden">
@@ -125,8 +127,8 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ item, onSelect }) => {
               <div className="text-xl font-black text-slate-900 flex items-baseline gap-1">
                 <span>{formatPrice(item.currentBid)}</span>
                 {item.buyItNowPrice && (
-                  <span className="text-[10px] font-medium text-slate-400 line-through">
-                    BIN {formatPrice(item.buyItNowPrice)}
+                  <span className="text-[10px] font-medium text-slate-500">
+                    Buy now {formatPrice(item.buyItNowPrice)}
                   </span>
                 )}
               </div>
@@ -139,7 +141,7 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ item, onSelect }) => {
               </div>
               {item.buyItNowPrice && (
                 <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-sm">
-                  {item.status === "active" && new Date(item.endTime).getTime() > Date.now() ? "Buy now available" : "Completed"}
+                  {item.status === "active" && new Date(item.endTime).getTime() > now ? "Buy now available" : "Completed"}
                 </span>
               )}
             </div>
@@ -154,7 +156,7 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ item, onSelect }) => {
           {/* Action Buttons */}
           <div className="mt-3 grid grid-cols-2 gap-2">
             <button
-              disabled={item.status !== "active" || new Date(item.endTime).getTime() <= Date.now()}
+              disabled={item.status !== "active" || new Date(item.endTime).getTime() <= now}
               onClick={handleQuickBid}
               className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all active:scale-95 shadow-xs"
             >
