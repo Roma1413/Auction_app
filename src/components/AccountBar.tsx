@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Eye, EyeOff, Gavel, LockKeyhole, Mail, UserRound, X } from 'lucide-react';
 import { useAuction } from '../context/AuctionContext';
+import { GoogleSignIn } from './GoogleSignIn';
 
 export function AccountBar() {
-  const { user, authenticate } = useAuction();
+  const { user, authenticate, authenticateGoogle } = useAuction();
   const [register, setRegister] = useState(false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
@@ -44,6 +45,14 @@ export function AccountBar() {
         <button type="button" aria-pressed={!register} className={!register ? 'active' : ''} disabled={busy} onClick={() => { setRegister(false); setMessage(''); setShowPassword(false); }}>Sign in</button>
         <button type="button" aria-pressed={register} className={register ? 'active' : ''} disabled={busy} onClick={() => { setRegister(true); setMessage(''); setShowPassword(false); }}>Create account</button>
       </div>
+      <GoogleSignIn busy={busy} onCredential={async credential => {
+        if (busy) return;
+        setBusy(true); setMessage('');
+        try {
+          const result = await authenticateGoogle(credential);
+          if (result.success) setVisible(false); else setMessage(result.message);
+        } finally { setBusy(false); }
+      }}/>
       <form key={register ? 'register' : 'login'} onSubmit={async event => {
         event.preventDefault(); if (busy) return; setBusy(true); setMessage('');
         const fields = new FormData(event.currentTarget);

@@ -1,8 +1,53 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { randomBytes } from 'node:crypto';
+import { OAuth2Client } from 'google-auth-library';
 import { prisma } from '../db.js';
 import { JWT_SECRET, AuthRequest } from '../middleware/authMiddleware.js';
+
+export async function googleLogin(req: Request, res: Response) {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) return res.status(503).json({ message: 'Google sign-in is not configured yet.' });
+  if (typeof req.body.credential !== 'string' || !req.body.credential) {
+    return res.status(400).json({ message: 'Google credential is required.' });
+  }
+  let payload;
+  try {
+    const ticket = await new OAuth2Client(clientId).verifyIdToken({ idToken: req.body.credential, audience: clientId });
+    payload = ticket.getPayload();
+  } catch {
+    return res.status(401).json({ message: 'Google sign-in could not be verified. Please try again.' });
+  }
+  if (!payload?.sub || !payload.email || !payload.email_verified) {
+    return res.status(401).json({ message: 'A verified Google email is required.' });
+  }
+  try {
+    let user = await prisma.user.findUnique({ where: { googleId: payload.sub } });
+    if (!user) {
+      const existing = await prisma.user.findUnique({ where: { email: payload.email } });
+      if (existing) {
+        // Only link when Google is authoritative for ownership of this email.
+        if (existing.googleId || !(payload.email.endsWith('@gmail.com') || payload.hd)) {
+          return res.status(409).json({ message: 'Please sign in with your password for this existing account.' });
+        }
+        user = await prisma.user.update({ where: { id: existing.id }, data: { googleId: payload.sub } });
+      } else {
+        user = await prisma.user.create({ data: {
+          googleId: payload.sub, email: payload.email,
+          name: payload.name || payload.email.split('@')[0],
+          password: await bcrypt.hash(randomBytes(32).toString('hex'), 10),
+          ...(payload.picture ? { avatar: payload.picture } : {})
+        } });
+      }
+    }
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+    return res.json({ token });
+  } catch (error) {
+    console.error('Google login error:', error);
+    return res.status(500).json({ message: 'Could not sign in with Google. Please try again.' });
+  }
+}
 
 export async function register(req: Request, res: Response) {
   try {

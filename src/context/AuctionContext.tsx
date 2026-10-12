@@ -37,6 +37,7 @@ interface AuctionContextType {
   loadError: string;
   refreshAuctions: () => Promise<void>;
   authenticate: (email: string, password: string, name?: string) => Promise<ActionResult>;
+  authenticateGoogle: (credential: string) => Promise<ActionResult>;
   logout: () => void;
 }
 
@@ -172,6 +173,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     } catch (error) { return { success: false, message: (error as Error).message }; }
   };
   const logout = () => { localStorage.removeItem('auction-token'); setUser(INITIAL_USER); };
+  const authenticateGoogle = async (credential: string): Promise<ActionResult> => {
+    try {
+      const data = await request('/auth/google', 'POST', { credential });
+      localStorage.setItem('auction-token', data.token);
+      const profile = await request('/auth/me');
+      setUser(profile.user);
+      return { success: true, message: 'Signed in' };
+    } catch (error) { return { success: false, message: (error as Error).message }; }
+  };
   const saveAction = async (path: string, body?: unknown): Promise<ActionResult> => {
     if (!user.id) { window.dispatchEvent(new Event('auction-sign-in')); return { success: false, message: 'Please sign in first.' }; }
     try {
@@ -227,6 +237,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       loadError,
       refreshAuctions,
       authenticate,
+      authenticateGoogle,
       logout
     }}>
       {children}
