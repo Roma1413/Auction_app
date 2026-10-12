@@ -117,6 +117,10 @@ export async function createAuction(req: AuthRequest, res: Response) {
     }
 
     const startVal = parseFloat(startingPrice);
+    const photoImages = Array.isArray(images) ? images : [images];
+    if (!photoImages.length || photoImages.length > 6 || photoImages.some(image => typeof image !== 'string' || image.length > 350000 || !(/^https?:\/\//i.test(image) || /^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/.test(image)))) {
+      return res.status(400).json({ message: 'Use image links or a product photo smaller than 350 KB.' });
+    }
     if (!Number.isFinite(startVal) || startVal <= 0 ||
         !Number.isFinite(new Date(endTime).getTime()) || new Date(endTime) <= new Date() ||
         (reservePrice != null && (!Number.isFinite(Number(reservePrice)) || Number(reservePrice) < startVal)) ||
@@ -132,7 +136,7 @@ export async function createAuction(req: AuthRequest, res: Response) {
         description,
         category,
         condition: condition || 'Brand New',
-        images: JSON.stringify(Array.isArray(images) ? images : [images]),
+        images: JSON.stringify(photoImages),
         startingPrice: startVal,
         currentBid: startVal,
         reservePrice: reservePrice ? parseFloat(reservePrice) : null,

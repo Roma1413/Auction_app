@@ -39,6 +39,11 @@ try {
   const sellerRoute = await fetch(`${base}/api/auctions/test-probe/close`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'accept-highest' }) });
   assert.equal(sellerRoute.status, 401);
   assert.match(sellerRoute.headers.get('content-type'), /application\/json/);
+  const photoRequest = await fetch(`${base}/api/auctions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ images: ['data:image/jpeg;base64,' + 'A'.repeat(300000)] }) });
+  assert.equal(photoRequest.status, 401, 'A compressed photo reaches authentication without exceeding the body limit');
+  const oversizedPhoto = await fetch(`${base}/api/auctions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ images: ['A'.repeat(1100000)] }) });
+  assert.equal(oversizedPhoto.status, 413);
+  assert.match((await oversizedPhoto.json()).message, /smaller photo/);
   assert.equal((await fetch(`${base}/missing.png`)).status, 404);
   const invalidGoogle = await fetch(`${base}/api/auth/google`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({credential:'invalid-test-token'}) });
   assert.equal(invalidGoogle.status, 401);

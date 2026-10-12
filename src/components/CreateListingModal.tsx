@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { X, Image as ImageIcon, Gavel, DollarSign, Clock } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { X, Image as ImageIcon, Gavel, DollarSign, Clock, Camera } from 'lucide-react';
 import { useAuction } from '../context/AuctionContext';
 import type { ItemCondition } from '../types/auction';
+import { prepareProductPhoto } from '../utils/productPhoto';
 
 interface CreateListingModalProps {
   onClose: () => void;
@@ -20,6 +21,20 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
   const [duration, setDuration] = useState('3d');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoError, setPhotoError] = useState('');
+  const cameraInput = useRef<HTMLInputElement>(null);
+  const galleryInput = useRef<HTMLInputElement>(null);
+  const choosePhoto = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setPhotoBusy(true); setPhotoError('');
+    try { setPhoto(await prepareProductPhoto(file)); setImageUrl(''); }
+    catch (error) { setPhotoError((error as Error).message); }
+    finally { setPhotoBusy(false); }
+  };
   const [location] = useState('New York, NY, USA');
   const [description, setDescription] = useState('');
 
@@ -33,10 +48,10 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting || !title.trim() || !startingPrice || !description.trim()) return;
+    if (isSubmitting || photoBusy || !title.trim() || !startingPrice || !description.trim()) return;
 
     const startVal = parseFloat(startingPrice);
-    const finalImg = imageUrl || presets[0].url;
+    const finalImg = photo || imageUrl || presets[0].url;
 
     // Calculate end time
     const now = new Date();
@@ -233,13 +248,24 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
           <div>
             <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1 flex items-center gap-1.5">
               <ImageIcon className="w-4 h-4 text-violet-600" />
-              Photo Image URL
+              Product photo
             </label>
+            <input ref={cameraInput} type="file" accept="image/*" capture="environment" onChange={choosePhoto} className="hidden" aria-label="Take a product photo"/>
+            <input ref={galleryInput} type="file" accept="image/*" onChange={choosePhoto} className="hidden" aria-label="Choose a product photo"/>
+            <div className="flex flex-wrap gap-2 mb-3">
+              <button type="button" disabled={photoBusy || isSubmitting} onClick={() => cameraInput.current?.click()} className="flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-3 text-xs font-semibold"><Camera size={18}/>Take photo</button>
+              <button type="button" disabled={photoBusy || isSubmitting} onClick={() => galleryInput.current?.click()} className="flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-3 text-xs font-semibold"><ImageIcon size={18}/>Choose from photos</button>
+            </div>
+            {photoBusy && <p className="text-xs text-slate-500 mb-2" role="status">Preparing photo…</p>}
+            {photoError && <p className="text-xs text-rose-600 mb-2" role="alert">{photoError}</p>}
+            {(photo || imageUrl) && <div className="mb-3"><img src={photo || imageUrl} alt="Product photo preview" className="w-full max-h-52 object-contain rounded-xl bg-slate-50"/><button type="button" disabled={photoBusy || isSubmitting} onClick={() => { setPhoto(''); setImageUrl(''); setPhotoError(''); }} className="text-xs underline mt-2">Remove photo</button></div>}
+            <p className="text-xs text-slate-500 mb-2">Take a photo on your phone, choose a picture, or paste an image link.</p>
             <input
               type="url"
               placeholder="https://images.unsplash.com/photo-..."
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+              onChange={(e) => { setImageUrl(e.target.value); setPhoto(''); }}
+              disabled={photoBusy || isSubmitting}
               className="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs font-mono text-slate-800 focus:outline-hidden mb-2"
             />
             
@@ -250,7 +276,8 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
                   <button
                     type="button"
                     key={p.label}
-                    onClick={() => setImageUrl(p.url)}
+                    onClick={() => { setImageUrl(p.url); setPhoto(''); }}
+                    disabled={photoBusy || isSubmitting}
                     className="text-[10px] font-semibold bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 px-2 py-0.5 rounded-md transition-colors shrink-0"
                   >
                     {p.label}
@@ -286,7 +313,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || photoBusy}
               className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-emerald-600/20 transition-all"
             >
               {isSubmitting ? 'Publishing…' : 'Publish Live Auction'}

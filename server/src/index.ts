@@ -23,7 +23,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -45,7 +45,8 @@ app.use('/api', (_req, res) => { res.status(404).json({ message: 'API route not 
 const apiErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   if (!req.path.startsWith('/api/')) return next(error);
   const malformedBody = error instanceof SyntaxError && 'body' in error;
-  res.status(malformedBody ? 400 : 500).json({ message: malformedBody ? 'Invalid request body. Please refresh and try again.' : 'Server error. Check the listing status before trying again.' });
+  const tooLarge = error?.type === 'entity.too.large';
+  res.status(tooLarge ? 413 : malformedBody ? 400 : 500).json({ message: tooLarge ? 'The listing is too large. Use a smaller photo.' : malformedBody ? 'Invalid request body. Please refresh and try again.' : 'Server error. Check the listing status before trying again.' });
 };
 app.use(apiErrorHandler);
 if (process.env.NODE_ENV === 'production') {
