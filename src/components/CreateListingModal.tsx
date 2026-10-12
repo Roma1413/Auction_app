@@ -81,8 +81,8 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden relative my-8">
+    <div className="listing-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm overflow-y-auto">
+      <div className="listing-dialog bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden relative my-8">
         
         {/* Modal Header */}
         <div className="bg-slate-900 text-white p-5 px-6 flex items-center justify-between">
@@ -97,6 +97,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
           </div>
           <button 
             onClick={onClose}
+            aria-label="Close listing form"
             className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -104,7 +105,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="listing-form p-6 space-y-5">
           
           {/* Title & Subtitle */}
           <div>
@@ -220,7 +221,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
               <Clock className="w-4 h-4 text-blue-600" />
               Auction Duration
             </label>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="duration-options grid grid-cols-5 gap-2">
               {[
                 { id: '5m', label: '5 Mins (Fast Test)' },
                 { id: '1h', label: '1 Hour' },
@@ -303,7 +304,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ onClose 
           </div>
 
           {/* Submit CTA Button */}
-          <div className="pt-3 border-t border-slate-200 flex items-center justify-end gap-3">
+          <div className="listing-submit pt-3 border-t border-slate-200 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}

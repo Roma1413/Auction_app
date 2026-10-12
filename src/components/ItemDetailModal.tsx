@@ -66,8 +66,8 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-5xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 relative flex flex-col max-h-[90vh]">
+    <div className="detail-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
+      <div className="detail-dialog bg-white w-full max-w-5xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 relative flex flex-col max-h-[90vh]">
         
         {/* Header bar */}
         <div className="p-4 px-6 bg-slate-900 text-white flex items-center justify-between shrink-0">
@@ -89,6 +89,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose 
             </button>
             <button 
               onClick={onClose}
+              aria-label="Close item details"
               className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors"
             >
               <X className="w-6 h-6" />
@@ -132,8 +133,8 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose 
 
               {/* Specifications Table */}
               {item.specs && (
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Item Specifications</h4>
+                <details className="item-specifications bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                  <summary className="text-xs font-bold text-slate-900 uppercase tracking-wider cursor-pointer">Item Specifications</summary>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     {Object.entries(item.specs).map(([key, val]) => (
                       <div key={key} className="bg-white p-2 rounded-lg border border-slate-100">
@@ -142,7 +143,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose 
                       </div>
                     ))}
                   </div>
-                </div>
+                </details>
               )}
             </div>
 

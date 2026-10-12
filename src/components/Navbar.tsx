@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Gavel, Search, Heart, Plus, Bell, X, ArrowUpRight, LogOut, UserRound } from 'lucide-react';
 import { useAuction } from '../context/AuctionContext';
 
@@ -7,6 +7,11 @@ export function Navbar({ onOpenDashboard }: NavbarProps) {
   const { searchQuery, setSearchQuery, setActiveCategory, user, logout, setIsCreateModalOpen, liveNotifications, clearNotifications, isBackendConnected } = useAuction();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  useEffect(() => {
+    const open = () => { setShowNotifications(value => !value); setShowAccount(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    window.addEventListener('auction-notifications', open);
+    return () => window.removeEventListener('auction-notifications', open);
+  }, []);
   const signIn = () => window.dispatchEvent(new Event('auction-sign-in'));
   return <header className="site-header">
     <div className="nav-main">

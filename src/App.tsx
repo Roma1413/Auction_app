@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { AccountBar } from './components/AccountBar';
 import { RecentlyViewed } from './components/RecentlyViewed';
 import { InstallApp } from './components/InstallApp';
+import { MobileNav } from './components/MobileNav';
 import { CategoryBar } from './components/CategoryBar';
 import { MainFeed } from './components/MainFeed';
 import { ItemDetailModal } from './components/ItemDetailModal';
@@ -41,6 +42,7 @@ const AppContent: React.FC = () => {
       />
 
       <RecentlyViewed />
+      <MobileNav onOpenDashboard={setDashboardTab}/>
       {/* Footer */}
       <footer className="mt-auto bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 text-center space-y-2">

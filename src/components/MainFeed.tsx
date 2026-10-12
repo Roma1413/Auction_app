@@ -25,6 +25,8 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
   const [sortBy, setSortBy] = useState<'endingSoon' | 'mostBids' | 'newest' | 'priceHigh' | 'priceLow'>('endingSoon');
 
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterCount = Object.entries(filters).filter(([key, value]) => value && value !== DEFAULT_FILTERS[key as keyof MarketplaceFilters]).length;
   const [searches, setSearches] = useState<SavedSearch[]>(() => { try { const data = JSON.parse(localStorage.getItem('auction-searches') || '[]'); return Array.isArray(data) ? data.filter(s => s && typeof s.id === 'string' && typeof s.query === 'string' && s.filters) : []; } catch { return []; } });
   const update = (key: keyof MarketplaceFilters, value: string) => setFilters(prev => ({ ...prev, [key]: value }));
   const persistSearches = (next: SavedSearch[]) => { setSearches(next); localStorage.setItem('auction-searches', JSON.stringify(next)); };
@@ -116,7 +118,9 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
         </div>
       </div>
 
-      <section className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4" aria-label="Marketplace filters">
+      <section className="market-filters bg-white border border-slate-200 rounded-2xl p-5 space-y-4" aria-label="Marketplace filters">
+        <button type="button" className="mobile-filter-toggle" aria-expanded={filtersOpen} aria-controls="market-filter-fields" onClick={() => setFiltersOpen(value => !value)}><span><SlidersHorizontal size={17}/>Filters {filterCount > 0 && <b>{filterCount}</b>}</span><span>{filtersOpen ? 'Hide' : 'Refine your finds'}</span></button>
+        <div id="market-filter-fields" className={`market-filter-fields space-y-4 ${filtersOpen ? 'is-open' : ''}`}>
         <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={filters.endingWithin === '60'} onChange={e => update('endingWithin', e.target.checked ? '60' : '')}/> Ending within an hour</label>
         <div className="flex justify-between items-center"><h3 className="font-bold text-sm flex items-center gap-2"><SlidersHorizontal size={16}/> Find it your way</h3><button className="text-xs text-slate-500 flex gap-1 items-center" onClick={() => {setFilters(DEFAULT_FILTERS);setSearchQuery('');setActiveCategory('All');}}><RotateCcw size={13}/> Reset</button></div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -129,6 +133,7 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
         </div>
         {filters.minPrice && filters.maxPrice && Number(filters.minPrice) > Number(filters.maxPrice) && <p role="alert" className="text-xs text-rose-600">Maximum price must be greater than minimum price.</p>}
         <div className="flex flex-wrap gap-2 items-center border-t border-slate-100 pt-3"><button onClick={saveSearch} className="flex items-center gap-2 rounded-full bg-slate-900 text-white px-3 py-2 text-xs"><BookmarkPlus size={14}/> Save this search</button><span className="text-[10px] text-slate-400">Saved on this device</span>{searches.map(saved => <div className="flex items-center rounded-full bg-slate-100 text-xs" key={saved.id}><button className="px-3 py-2" onClick={() => {setSearchQuery(saved.query);setActiveCategory(saved.category);setFilters(saved.filters);setSortBy(saved.sort);}}>{saved.query || saved.category}{saved.filters.buying === 'buyNow' ? ' · Buy now' : ''}</button><button className="pr-2" aria-label="Remove saved search" onClick={() => persistSearches(searches.filter(s => s.id !== saved.id))}><X size={12}/></button></div>)}</div>
+        </div>
       </section>
       {/* Grid of Auctions */}
       {loadError ? <div role="alert" className="bg-rose-50 border border-rose-200 rounded-2xl p-8 text-center"><p>{loadError}</p><button disabled={isLoading} onClick={() => void refreshAuctions()} className="mt-4 bg-slate-900 text-white rounded-xl px-4 py-2 disabled:opacity-50">{isLoading ? 'Retrying…' : 'Try again'}</button></div> : isLoading && auctions.length === 0 ? <p role="status" className="p-12 text-center text-slate-500">Loading listings…</p> : sortedAuctions.length === 0 ? (
@@ -141,7 +146,7 @@ export const MainFeed: React.FC<MainFeedProps> = ({ onSelectItem }) => {
           <button onClick={() => { setFilters({ ...DEFAULT_FILTERS, status: 'All' }); setSearchQuery(''); setActiveCategory('All'); }} className="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white">Browse all listings, including completed auctions</button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="auction-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedAuctions.map(item => (
             <AuctionCard
               key={item.id}
