@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, typ
 import confetti from 'canvas-confetti';
 import { io, Socket } from 'socket.io-client';
 import type { AuctionItem, UserProfile, BidHistoryEntry } from '../types/auction';
+import { readApiResponse } from '../utils/apiResponse';
 
 
 const API_BASE = '/api';
@@ -10,9 +11,7 @@ type ActionResult = { success: boolean; message: string };
 async function request(path: string, method = 'GET', body?: unknown) {
   const token = localStorage.getItem('auction-token');
   const res = await fetch(`${API_BASE}${path}`, { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}) });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Request failed');
-  return data;
+  return readApiResponse(res);
 }
 
 interface AuctionContextType {
@@ -220,7 +219,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       notify(data.message);
       return { success: true, message: data.message };
     } catch (error) {
-      void refreshAuctions();
+      await refreshAuctions();
       return { success: false, message: (error as Error).message };
     }
   };

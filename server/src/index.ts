@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type ErrorRequestHandler } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
@@ -41,9 +41,15 @@ app.get('/api/health', async (_req, res) => {
 });
 
 // One production origin serves the app, API, and live updates over HTTPS.
+app.use('/api', (_req, res) => { res.status(404).json({ message: 'API route not found' }); });
+const apiErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
+  if (!req.path.startsWith('/api/')) return next(error);
+  const malformedBody = error instanceof SyntaxError && 'body' in error;
+  res.status(malformedBody ? 400 : 500).json({ message: malformedBody ? 'Invalid request body. Please refresh and try again.' : 'Server error. Check the listing status before trying again.' });
+};
+app.use(apiErrorHandler);
 if (process.env.NODE_ENV === 'production') {
   const frontend = fileURLToPath(new URL('../../dist/', import.meta.url));
-  app.use('/api', (_req, res) => { res.status(404).json({ message: 'API route not found' }); });
   app.use(express.static(frontend, {
     setHeaders(res, path) {
       if (path.endsWith('sw.js') || path.endsWith('index.html') || path.endsWith('manifest.webmanifest')) {

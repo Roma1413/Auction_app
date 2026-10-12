@@ -32,6 +32,13 @@ try {
   assert.equal((await fetch(`${base}/icons/icon-192.png`)).status, 200);
   assert.equal((await fetch(`${base}/offline.html`)).status, 200);
   assert.equal((await fetch(`${base}/api/not-a-route`)).status, 404);
+  const malformed = await fetch(`${base}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{broken' });
+  assert.equal(malformed.status, 400);
+  assert.match(malformed.headers.get('content-type'), /application\/json/);
+  assert.match((await malformed.json()).message, /Invalid request body/);
+  const sellerRoute = await fetch(`${base}/api/auctions/test-probe/close`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'accept-highest' }) });
+  assert.equal(sellerRoute.status, 401);
+  assert.match(sellerRoute.headers.get('content-type'), /application\/json/);
   assert.equal((await fetch(`${base}/missing.png`)).status, 404);
   const invalidGoogle = await fetch(`${base}/api/auth/google`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({credential:'invalid-test-token'}) });
   assert.equal(invalidGoogle.status, 401);
