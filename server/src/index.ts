@@ -3,6 +3,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'node:url';
 import { prisma } from './db.js';
 
 import authRoutes from './routes/authRoutes.js';
@@ -38,6 +39,27 @@ app.get('/api/health', async (_req, res) => {
     res.status(503).json({ status: 'unavailable', message: 'Database connection failed' });
   }
 });
+
+// One production origin serves the app, API, and live updates over HTTPS.
+if (process.env.NODE_ENV === 'production') {
+  const frontend = fileURLToPath(new URL('../../dist/', import.meta.url));
+  app.use('/api', (_req, res) => { res.status(404).json({ message: 'API route not found' }); });
+  app.use(express.static(frontend, {
+    setHeaders(res, path) {
+      if (path.endsWith('sw.js') || path.endsWith('index.html') || path.endsWith('manifest.webmanifest')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+      if (path.endsWith('manifest.webmanifest')) res.setHeader('Content-Type', 'application/manifest+json');
+      res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    }
+  }));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/socket.io') || req.path.split('/').pop()?.includes('.')) return next();
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    res.sendFile('index.html', { root: frontend });
+  });
+}
 
 // Configure Socket.io
 const io = new Server(httpServer, {

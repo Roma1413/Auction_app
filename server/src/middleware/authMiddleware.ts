@@ -3,6 +3,9 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'auction_super_secret_jwt_key_2026';
+if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'change_me' || process.env.JWT_SECRET === 'auction_super_secret_jwt_key_2026')) {
+  throw new Error('Set a unique JWT_SECRET before running in production.');
+}
 
 export interface AuthRequest extends Request {
   user?: {

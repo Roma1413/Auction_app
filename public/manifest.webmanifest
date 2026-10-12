@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "Auction Pro",
+  "short_name": "Auction Pro",
+  "description": "Discover unique finds, save your favorites, and bid live.",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f7f2",
+  "theme_color": "#1d3729",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

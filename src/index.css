@@ -78,3 +78,14 @@
 .auth-google>button { width:100%; padding:12px; border:1px solid #ddd; border-radius:4px; color:#777; cursor:not-allowed; }
 .auth-divider { display:flex; align-items:center; gap:12px; margin-top:18px; color:#888; font-size:11px; }
 .auth-divider::before,.auth-divider::after { content:''; height:1px; background:#e5e5e5; flex:1; }
+
+.app-shell { padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right); }
+.site-header { padding-top:env(safe-area-inset-top); }
+.app-shell>footer { padding-bottom:calc(2rem + env(safe-area-inset-bottom)); }
+.app-install { margin:18px auto 0; max-width:380px; }
+.app-install-button { display:inline-flex; align-items:center; gap:8px; padding:12px 18px; min-height:44px; border:1px solid #586356; border-radius:30px; color:#f7f7f2; font-size:12px; }
+.app-install-button:hover { background:#254a37; }
+.app-install-button:disabled { opacity:.6; }
+.app-install-help { display:flex; align-items:flex-start; gap:12px; margin-top:14px; border-radius:12px; padding:16px; background:#254a37; text-align:left; color:#efefea; font-size:12px; line-height:1.7; }
+.app-install-help svg { flex-shrink:0; margin-top:3px; }
+.app-offline-notice { padding:12px; margin-top:14px; border-radius:10px; background:#e9eddf; color:#1d3729; }

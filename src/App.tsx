@@ -3,6 +3,7 @@ import { AuctionProvider, useAuction } from './context/AuctionContext';
 import { Navbar } from './components/Navbar';
 import { AccountBar } from './components/AccountBar';
 import { RecentlyViewed } from './components/RecentlyViewed';
+import { InstallApp } from './components/InstallApp';
 import { CategoryBar } from './components/CategoryBar';
 import { MainFeed } from './components/MainFeed';
 import { ItemDetailModal } from './components/ItemDetailModal';
@@ -51,6 +52,7 @@ const AppContent: React.FC = () => {
           <p className="text-[11px] text-slate-500 max-w-md mx-auto">
             Discover unique finds. Save your favorites. Give something great a new home.
           </p>
+          <InstallApp />
         </div>
       </footer>
 

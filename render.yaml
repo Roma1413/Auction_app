@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: auction-pro
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm --prefix server ci --include=dev && npm --prefix server run db:generate && npm run build && npm --prefix server run build
+    startCommand: npm --prefix server start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        value: 555722341429-efp3uu7396s0038e1bg1cbks1dvjhteq.apps.googleusercontent.com
+      - key: VITE_GOOGLE_CLIENT_ID
+        value: 555722341429-efp3uu7396s0038e1bg1cbks1dvjhteq.apps.googleusercontent.com

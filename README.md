@@ -8,6 +8,8 @@ Sign in or select Register to create an account. Existing demo login: alex@examp
 
 This is a browser app. Chrome or Edge can open it in a separate desktop window using their install-page-as-app or shortcut options. The local launcher must stay running.
 
+Auction Pro also supports phone installation with a home-screen icon and standalone display. See [phone app setup](PHONE_APP.md) for HTTPS deployment and Android/iPhone installation. A production Express server serves both the built frontend and API from one origin; `render.yaml` includes a deployment configuration.
+
 ## Database
 
 Private database URLs are in server/.env. For a fresh installation, copy server/.env.example and fill in credentials from Supabase Dashboard → Connect. DATABASE_URL is the runtime URL; DIRECT_URL is used for Prisma schema commands. Port 5432 is the session pooler; transaction pooling uses 6543 with pgbouncer=true. URL-encode special characters in passwords.
