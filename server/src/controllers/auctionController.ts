@@ -255,3 +255,40 @@ export async function buyItNow(req: AuthRequest, res: Response) {
     return res.status(400).json({ message: err instanceof Error ? err.message : 'Error purchasing item' });
   }
 }
+
+export async function closeAuction(req: AuthRequest, res: Response) {
+  const userId = req.user?.userId;
+  if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+  const id = String(req.params.id);
+  const { action, reason, expectedBidId } = req.body;
+  if (action !== 'accept-highest' && action !== 'cancel') return res.status(400).json({ message: 'Invalid seller action' });
+  try {
+    const auction = await prisma.$transaction(async tx => {
+      const target = await tx.auction.findUnique({ where: { id }, include: { bids: { orderBy: [{ amount: 'desc' }, { createdAt: 'asc' }] } } });
+      if (!target) throw new Error('Auction not found');
+      if (target.sellerId !== userId) throw new Error('Only the seller can end this auction');
+      if (target.status !== 'active' || target.endTime <= new Date()) throw new Error('This auction has already ended');
+      const highest = target.bids[0];
+      const accepting = action === 'accept-highest';
+      if (accepting && (!highest || expectedBidId !== highest.id)) throw new Error('The highest bid changed. Refresh and review the buyer and price again.');
+      const cancellationReason = typeof reason === 'string' ? reason.trim() : '';
+      if (!accepting && highest && (cancellationReason.length < 10 || cancellationReason.length > 500)) throw new Error('Explain why the item is damaged or unavailable (10–500 characters).');
+      if (!accepting && cancellationReason.length > 500) throw new Error('Keep the cancellation reason within 500 characters.');
+      const changed = await tx.auction.updateMany({
+        where: { id, sellerId: userId, status: 'active', currentBid: target.currentBid, bidCount: target.bidCount, endTime: { gt: new Date() } },
+        data: { status: accepting ? 'sold' : 'cancelled', endTime: new Date(), closureType: accepting ? 'accepted-highest' : 'seller-cancelled', winnerId: accepting ? highest.bidderId : null, cancellationReason: accepting ? null : cancellationReason || 'Cancelled by the seller before any bids.' }
+      });
+      if (changed.count !== 1) throw new Error('Auction changed. Refresh and review it again.');
+      const message = accepting
+        ? `The seller ended "${target.title}" early and accepted ${highest.bidderName}'s highest bid of $${highest.amount.toLocaleString()}.`
+        : `The seller cancelled "${target.title}". Reason: ${cancellationReason || 'Cancelled before any bids.'} No winning bid or purchase was recorded.`;
+      const recipients = [...new Set(target.bids.map(bid => bid.bidderId))];
+      if (recipients.length) await tx.notification.createMany({ data: recipients.map(userId => ({ userId, message })) });
+      return tx.auction.findUniqueOrThrow({ where: { id }, include: { seller: true, bids: { orderBy: { createdAt: 'desc' } } } });
+    });
+    req.app.get('io')?.emit('auction-ended', { auctionId: id, title: auction.title, status: auction.status, auction: formatAuction(auction), winner: auction.status === 'sold' ? auction.bids.find(bid => bid.bidderId === auction.winnerId) : null });
+    return res.json({ success: true, message: auction.status === 'sold' ? 'Highest bid accepted. Auction sold.' : 'Auction cancelled.', auction: formatAuction(auction) });
+  } catch (error) {
+    return res.status(400).json({ message: error instanceof Error ? error.message : 'Could not end auction' });
+  }
+}

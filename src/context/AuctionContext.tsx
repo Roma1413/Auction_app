@@ -28,6 +28,7 @@ interface AuctionContextType {
   setIsCreateModalOpen: (open: boolean) => void;
   placeBid: (auctionId: string, amount: number) => Promise<ActionResult>;
   buyItNow: (auctionId: string) => Promise<ActionResult>;
+  closeAuction: (auctionId: string, action: 'cancel' | 'accept-highest', reason?: string, expectedBidId?: string) => Promise<ActionResult>;
   toggleWatchlist: (auctionId: string) => void;
   createAuction: (newAuctionData: Omit<AuctionItem, 'id' | 'seller' | 'currentBid' | 'bidCount' | 'status' | 'bids' | 'startTime'>) => Promise<void>;
   liveNotifications: { id: string; message: string; timestamp: string }[];
@@ -116,14 +117,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       }));
     });
 
-    newSocket.on('auction-ended', (data: { auctionId: string; winner: any; title: string; status?: 'ended' | 'sold' }) => {
+    newSocket.on('auction-ended', (data: { auctionId: string; winner: any; title: string; status?: AuctionItem['status']; auction?: AuctionItem }) => {
       setAuctions(prev => prev.map(auc => {
         if (auc.id === data.auctionId) {
-          return { ...auc, status: data.status || 'ended' };
+          return data.auction || { ...auc, status: data.status || 'ended' };
         }
         return auc;
       }));
 
+      if (data.auction) return;
       setLiveNotifications(prev => [
         {
           id: `notif-ended-${Date.now()}`,
@@ -143,6 +145,22 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       newSocket.disconnect();
     };
   }, [refreshAuctions]);
+
+  useEffect(() => {
+    if (!user.id) return;
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const data = await request('/user/notifications');
+        if (!cancelled) setLiveNotifications(previous => [...data.notifications, ...previous.filter(n => !data.notifications.some((saved: { id: string }) => saved.id === n.id))].slice(0, 50));
+      } catch { /* Keep notices when the connection is interrupted. */ }
+    };
+    void load();
+    const timer = window.setInterval(() => { void load(); }, 30000);
+    const onEnd = () => { void load(); };
+    socket?.on('auction-ended', onEnd);
+    return () => { cancelled = true; window.clearInterval(timer); socket?.off('auction-ended', onEnd); };
+  }, [user.id, socket]);
 
   // Subscribe selected item to Socket room
   useEffect(() => {
@@ -172,7 +190,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       return { success: true, message: 'Signed in' };
     } catch (error) { return { success: false, message: (error as Error).message }; }
   };
-  const logout = () => { localStorage.removeItem('auction-token'); setUser(INITIAL_USER); };
+  const logout = () => { localStorage.removeItem('auction-token'); setUser(INITIAL_USER); setLiveNotifications([]); };
   const authenticateGoogle = async (credential: string): Promise<ActionResult> => {
     try {
       const data = await request('/auth/google', 'POST', { credential });
@@ -195,6 +213,17 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
   const placeBid = (auctionId: string, amount: number) => saveAction('/auctions/' + auctionId + '/bid', { amount });
   const buyItNow = (auctionId: string) => saveAction('/auctions/' + auctionId + '/buy-now');
+  const closeAuction = async (auctionId: string, action: 'cancel' | 'accept-highest', reason?: string, expectedBidId?: string): Promise<ActionResult> => {
+    try {
+      const data = await request('/auctions/' + auctionId + '/close', 'POST', { action, reason, expectedBidId });
+      setAuctions(previous => previous.map(a => a.id === auctionId ? data.auction : a));
+      notify(data.message);
+      return { success: true, message: data.message };
+    } catch (error) {
+      void refreshAuctions();
+      return { success: false, message: (error as Error).message };
+    }
+  };
   const toggleWatchlist = async (auctionId: string) => {
     if (!user.id) { window.dispatchEvent(new Event('auction-sign-in')); return; }
     try {
@@ -212,7 +241,11 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
     } catch (error) { notify((error as Error).message); }
   };
 
-  const clearNotifications = () => setLiveNotifications([]);
+  const clearNotifications = () => {
+    const ids = liveNotifications.map(n => n.id);
+    if (!user.id) { setLiveNotifications([]); return; }
+    request('/user/notifications/clear', 'POST', { ids }).then(() => setLiveNotifications(previous => previous.filter(n => !ids.includes(n.id)))).catch(() => notify('Could not clear notifications. Please try again.'));
+  };
 
   return (
     <AuctionContext.Provider value={{
@@ -228,6 +261,7 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       setIsCreateModalOpen: open => { if (!open || user.id) setIsCreateModalOpen(open); else window.dispatchEvent(new Event("auction-sign-in")); },
       placeBid,
       buyItNow,
+      closeAuction,
       toggleWatchlist,
       createAuction,
       liveNotifications,

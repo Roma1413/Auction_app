@@ -16,6 +16,7 @@ import type { AuctionItem } from '../types/auction';
 import { useAuction } from '../context/AuctionContext';
 import { formatPrice, formatTimeAgo } from '../utils/timeFormat';
 import { CountdownTimer } from './CountdownTimer';
+import { SellerControls } from './SellerControls';
 
 interface ItemDetailModalProps {
   item: AuctionItem;
@@ -286,11 +287,12 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose 
                       </button>
                     </div>
                   )}
-                </div> : <p className="text-sm text-slate-400 border-t border-slate-800 pt-4">This listing has ended. Explore the seller’s shop for more finds.</p>}
+                </div> : <p className="text-sm text-slate-400 border-t border-slate-800 pt-4">{item.status === 'cancelled' ? `Auction cancelled. ${item.cancellationReason || ''}` : item.closureType === 'accepted-highest' ? 'The seller accepted the highest bid and ended this auction early.' : 'This listing has ended. Explore the seller’s shop for more finds.'}</p>}
 
               </div>
 
               {/* Guarantees */}
+              {isActive && <SellerControls key={item.id} item={item}/>}
               <div className="grid grid-cols-3 gap-2 text-center text-xs text-slate-600">
                 <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                   <Truck className="w-4 h-4 text-blue-600 mx-auto mb-1" />

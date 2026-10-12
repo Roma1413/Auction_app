@@ -47,6 +47,10 @@ The local Vite server proxies /api and /socket.io to localhost:4000. For hosting
 
 ## Marketplace features
 
+Sellers can open their listing from Selling and use Manage your auction. Before any bids they can cancel freely. After bids they can confirm an early sale to the highest bidder (including explicitly accepting below reserve), or cancel if the item is damaged/unavailable with a public 10–500 character reason. Cancellations do not count as wins. All bidders receive saved in-app notices, including when they next sign in; no emails or payments are sent. Confirmation rejects a changed highest bid or concurrent auction update.
+
+The seller-control database migration is `server/prisma/seller-controls.sql`. It has been applied to the configured database; apply it before deploying against another database. The Notification table has RLS enabled and is accessed only by the authenticated backend. Run `node tests/seller-controls.mjs` after building the backend to check the seller action rules.
+
 - Marketplace-first design in ivory and forest green, with responsive navigation and a featured listing.
 - Sign-in and registration open from the header in a dialog with password visibility, keyboard focus containment, Escape dismissal, and guest browsing.
 - Price, condition, buying-format, availability, and seller filters.

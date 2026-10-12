@@ -89,3 +89,12 @@
 .app-install-help { display:flex; align-items:flex-start; gap:12px; margin-top:14px; border-radius:12px; padding:16px; background:#254a37; text-align:left; color:#efefea; font-size:12px; line-height:1.7; }
 .app-install-help svg { flex-shrink:0; margin-top:3px; }
 .app-offline-notice { padding:12px; margin-top:14px; border-radius:10px; background:#e9eddf; color:#1d3729; }
+.seller-controls { padding:20px; border:1px solid #dedfd7; border-radius:16px; background:#f7f7f2; color:#1d3729; }
+.seller-controls h3 { font-weight:650; font-size:15px; margin-bottom:12px; }
+.seller-controls p { font-size:13px; line-height:1.7; margin:10px 0; }
+.seller-controls label { display:block; font-size:12px; margin-top:12px; }
+.seller-controls textarea { display:block; width:100%; background:white; border:1px solid #dedfd7; border-radius:8px; padding:10px; margin:6px 0; }
+.seller-control-buttons { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.seller-control-buttons button { padding:12px 14px; min-height:44px; border-radius:10px; border:1px solid #1d3729; font-size:12px; }
+.seller-control-buttons button:first-child { background:#1d3729; color:white; }
+.seller-control-buttons button:disabled { opacity:.5; cursor:not-allowed; }

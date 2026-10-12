@@ -37,7 +37,10 @@ export interface AuctionItem {
   bidCount: number;
   startTime: string;
   endTime: string; // ISO string timestamp
-  status: 'active' | 'ended' | 'sold';
+  status: 'active' | 'ended' | 'sold' | 'cancelled';
+  closureType?: 'accepted-highest' | 'seller-cancelled';
+  cancellationReason?: string;
+  winnerId?: string;
   location: string;
   shippingCost: number;
   bids: BidHistoryEntry[];

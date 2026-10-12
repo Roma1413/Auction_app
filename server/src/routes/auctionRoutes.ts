@@ -4,7 +4,8 @@ import {
   getAuctionById, 
   createAuction, 
   placeBid, 
-  buyItNow 
+  buyItNow,
+  closeAuction
 } from '../controllers/auctionController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 
@@ -15,5 +16,6 @@ router.get('/:id', getAuctionById);
 router.post('/', authMiddleware, createAuction);
 router.post('/:id/bid', authMiddleware, placeBid);
 router.post('/:id/buy-now', authMiddleware, buyItNow);
+router.post('/:id/close', authMiddleware, closeAuction);
 
 export default router;
