@@ -17,6 +17,10 @@ child.stderr.on('data', () => {});
 try {
   for (let attempt = 0; attempt < 100 && !started && child.exitCode === null; attempt++) await delay(100);
   assert.ok(started, 'Production server must start on the test port');
+  assert.deepEqual(await (await fetch(`${base}/api/health`)).json(), { status: 'ok' });
+  const ready = await fetch(`${base}/api/ready`);
+  assert.equal(ready.status, 503, 'The test database is deliberately unavailable');
+  assert.deepEqual(await ready.json(), { status: 'unavailable' });
   const page = await fetch(base);
   assert.equal(page.status, 200);
   assert.match(await page.text(), /manifest.webmanifest/);

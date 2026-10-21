@@ -9,6 +9,7 @@ import { prisma } from './db.js';
 import authRoutes from './routes/authRoutes.js';
 import auctionRoutes from './routes/auctionRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import { createHealthRouter } from './routes/healthRoutes.js';
 import { setupSocketHandlers } from './socket.js';
 import { startAuctionScheduler } from './services/schedulerService.js';
 
@@ -26,19 +27,10 @@ app.use(cors({
 app.use(express.json({ limit: '1mb' }));
 
 // API Routes
+app.use('/api', createHealthRouter(() => prisma.$queryRaw`SELECT 1`));
 app.use('/api/auth', authRoutes);
 app.use('/api/auctions', auctionRoutes);
 app.use('/api/user', userRoutes);
-
-// Health check endpoint
-app.get('/api/health', async (_req, res) => {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    res.json({ status: 'ok', database: 'connected' });
-  } catch {
-    res.status(503).json({ status: 'unavailable', message: 'Database connection failed' });
-  }
-});
 
 // One production origin serves the app, API, and live updates over HTTPS.
 app.use('/api', (_req, res) => { res.status(404).json({ message: 'API route not found' }); });

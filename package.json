@@ -6,9 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
+    "lint": "oxlint src scripts tests server/src vite.config.ts",
     "preview": "vite preview",
-    "dev:all": "node scripts/dev.mjs"
+    "dev:all": "node scripts/dev.mjs",
+    "lint:backend": "oxlint server/src",
+    "build:all": "npm run build && npm --prefix server run build",
+    "test": "node scripts/run-tests.mjs",
+    "test:frontend": "node scripts/run-tests.mjs frontend",
+    "test:health": "node scripts/run-tests.mjs health",
+    "test:smoke": "node scripts/run-tests.mjs smoke",
+    "check": "npm --prefix server run db:generate && npm run lint && npm run build:all && npm test",
+    "smoke": "node scripts/smoke-check.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -30,5 +38,8 @@
     "oxlint": "^1.81.0",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
+  },
+  "engines": {
+    "node": "^22.12.0 || >=24.0.0"
   }
 }

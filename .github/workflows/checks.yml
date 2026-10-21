@@ -1,0 +1,35 @@
+name: Automated checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Placeholders only. Tests override these again; no repository secrets are used.
+      DATABASE_URL: postgresql://test:test@127.0.0.1:1/auction_test?connect_timeout=1&pool_timeout=1
+      DIRECT_URL: postgresql://test:test@127.0.0.1:1/auction_test?connect_timeout=1&pool_timeout=1
+      JWT_SECRET: ci-test-secret-only
+      GOOGLE_CLIENT_ID: automated-test.apps.googleusercontent.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            server/package-lock.json
+      - name: Install frontend dependencies from lockfile
+        run: npm ci --include=dev
+      - name: Install backend dependencies from lockfile
+        run: npm --prefix server ci --include=dev
+      - name: Generate Prisma Client, lint, build both packages, and test
+        run: npm run check

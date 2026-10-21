@@ -32,16 +32,39 @@ Bids, listings, purchases, and watchlists now use authenticated API requests. Fa
 
 ## Setup and verification
 
+Use Node 22.12+ (Node 22 in `.nvmrc`, CI, and Render; local Node 24 is also supported).
+Install from both committed lockfiles, including build tools:
+
 ```
-npm install
-npm --prefix server install
-npm --prefix server run db:generate
-npm run build
-npm --prefix server run build
-npm --prefix server run db:check
+npm ci --include=dev
+npm --prefix server ci --include=dev
+npm run check
 ```
 
-The database is already populated. The db:seed command DELETES existing users, auctions, bids, and watchlists before adding demo data. Do not run it on existing data. Review schema changes before db:push and never accept data-loss flags blindly.
+`npm run check` generates Prisma Client, lints, builds both packages, and runs all
+automated tests. The tests use mocks and explicit unavailable loopback database
+URLs, never the production database. GitHub Actions runs this check on PRs and
+pushes to main. No seed, schema push, or migration is part of checks.
+
+Useful commands after installation:
+
+| Command | Purpose / prerequisites |
+| --- | --- |
+| `npm run lint` | Lint frontend, backend, scripts, and tests with existing Oxlint |
+| `npm run build:all` | Build frontend/backend; generate Prisma Client first |
+| `npm test` | Run all tests; requires Prisma generation and both builds |
+| `npm run test:health` | Health tests with injected DB probes; requires backend build |
+| `npm run test:smoke` | Smoke CLI tests against local HTTP fixtures; only Node required |
+| `npm --prefix server run check` | Generate, lint, build, and test backend; install both packages first |
+| `npm run smoke -- http://localhost:4000` | Read-only liveness/readiness check against a running service |
+
+See [operations and deployment](docs/operations.md), [QA scenarios](docs/test-plan.md),
+and [actual verification results and limitations](docs/test-results.md) for AUC-XX.
+`/api/health` reports process liveness; `/api/ready` checks database connectivity
+with a two-second HTTP deadline. Render uses readiness. The smoke script is
+manual; external continuous monitoring is not configured.
+
+The db:seed command DELETES existing users, auctions, bids, and watchlists before adding demo data. Do not run it on existing data. Review schema changes before db:push and never accept data-loss flags blindly. Database administration is separate from automated verification; do not run it against production for the demo.
 
 The local Vite server proxies /api and /socket.io to localhost:4000. For hosting, deploy the API and frontend with HTTPS and configure those proxy routes on your frontend host.
 
@@ -49,7 +72,7 @@ The local Vite server proxies /api and /socket.io to localhost:4000. For hosting
 
 Sellers can open their listing from Selling and use Manage your auction. Before any bids they can cancel freely. After bids they can confirm an early sale to the highest bidder (including explicitly accepting below reserve), or cancel if the item is damaged/unavailable with a public 10–500 character reason. Cancellations do not count as wins. All bidders receive saved in-app notices, including when they next sign in; no emails or payments are sent. Confirmation rejects a changed highest bid or concurrent auction update.
 
-The seller-control database migration is `server/prisma/seller-controls.sql`. It has been applied to the configured database; apply it before deploying against another database. The Notification table has RLS enabled and is accessed only by the authenticated backend. Run `node tests/seller-controls.mjs` after building the backend to check the seller action rules.
+The seller-control schema script is `server/prisma/seller-controls.sql`. Review database compatibility before deploying against another database; AUC-XX verification does not apply or verify remote schema changes. The script enables RLS on Notification for backend access. Run `npm --prefix server test` after generating Prisma Client and building the backend to check seller rules and health endpoints with mocks.
 
 - Marketplace-first design in ivory and forest green, with responsive navigation and a featured listing.
 - Sign-in and registration open from the header in a dialog with password visibility, keyboard focus containment, Escape dismissal, and guest browsing.
