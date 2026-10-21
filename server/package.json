@@ -11,7 +11,10 @@
     "db:seed": "tsx src/seed.ts",
     "db:studio": "prisma studio",
     "db:check": "tsx src/checkDatabase.ts",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "lint": "npm --prefix .. run lint:backend",
+    "test": "node ../scripts/run-tests.mjs backend",
+    "check": "npm run db:generate && npm run lint && npm run build && npm test"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
@@ -35,5 +38,8 @@
     "prisma": "^6.4.1",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": "^22.12.0 || >=24.0.0"
   }
 }
