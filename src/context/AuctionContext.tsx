@@ -1,47 +1,18 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import React, { useState, useEffect, useCallback, type ReactNode } from 'react';
 import confetti from 'canvas-confetti';
 import { io, Socket } from 'socket.io-client';
 import type { AuctionItem, UserProfile, BidHistoryEntry } from '../types/auction';
 import { readApiResponse } from '../utils/apiResponse';
+import { AuctionContext, type ActionResult } from './useAuction';
 
 
 const API_BASE = '/api';
 const SOCKET_URL = window.location.origin;
-type ActionResult = { success: boolean; message: string };
 async function request(path: string, method = 'GET', body?: unknown) {
   const token = localStorage.getItem('auction-token');
   const res = await fetch(`${API_BASE}${path}`, { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}) });
   return readApiResponse(res);
 }
-
-interface AuctionContextType {
-  auctions: AuctionItem[];
-  user: UserProfile;
-  activeCategory: string;
-  setActiveCategory: (cat: string) => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  selectedItem: AuctionItem | null;
-  setSelectedItem: (item: AuctionItem | null) => void;
-  isCreateModalOpen: boolean;
-  setIsCreateModalOpen: (open: boolean) => void;
-  placeBid: (auctionId: string, amount: number) => Promise<ActionResult>;
-  buyItNow: (auctionId: string) => Promise<ActionResult>;
-  closeAuction: (auctionId: string, action: 'cancel' | 'accept-highest', reason?: string, expectedBidId?: string) => Promise<ActionResult>;
-  toggleWatchlist: (auctionId: string) => void;
-  createAuction: (newAuctionData: Omit<AuctionItem, 'id' | 'seller' | 'currentBid' | 'bidCount' | 'status' | 'bids' | 'startTime'>) => Promise<void>;
-  liveNotifications: { id: string; message: string; timestamp: string }[];
-  clearNotifications: () => void;
-  isBackendConnected: boolean;
-  isLoading: boolean;
-  loadError: string;
-  refreshAuctions: () => Promise<void>;
-  authenticate: (email: string, password: string, name?: string) => Promise<ActionResult>;
-  authenticateGoogle: (credential: string) => Promise<ActionResult>;
-  logout: () => void;
-}
-
-const AuctionContext = createContext<AuctionContextType | undefined>(undefined);
 
 const INITIAL_USER: UserProfile = {
   id: '',
@@ -58,26 +29,52 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [user, setUser] = useState<UserProfile>(INITIAL_USER);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null);
+  const [selectedSnapshot, setSelectedSnapshot] = useState<AuctionItem | null>(null);
+  const selectedItemId = selectedSnapshot?.id;
+  // Read the latest listing directly; no effect or duplicate auction state to synchronize.
+  const selectedItem = auctions.find(auction => auction.id === selectedItemId) || selectedSnapshot;
+  const [recentItemIds, setRecentItemIds] = useState<string[]>(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('auction-recent') || '[]');
+      return Array.isArray(stored) ? stored.filter(id => typeof id === 'string') : [];
+    } catch { return []; }
+  });
+  const setSelectedItem = (item: AuctionItem | null) => {
+    setSelectedSnapshot(item);
+    if (item && item.id !== selectedItemId) {
+      setRecentItemIds(previous => [item.id, ...previous.filter(id => id !== item.id)].slice(0, 6));
+    }
+  };
+  const clearRecentHistory = () => setRecentItemIds([]);
+  useEffect(() => {
+    try {
+      if (recentItemIds.length) localStorage.setItem('auction-recent', JSON.stringify(recentItemIds));
+      else localStorage.removeItem('auction-recent');
+    } catch { /* Keep history usable in memory if browser storage is unavailable. */ }
+  }, [recentItemIds]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [liveNotifications, setLiveNotifications] = useState<{ id: string; message: string; timestamp: string }[]>([]);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  // Create without connecting; the effect owns connection setup and cleanup.
+  const [socket] = useState<Socket>(() => io(SOCKET_URL, {
+    autoConnect: false,
+    reconnectionAttempts: 5,
+    timeout: 3000,
+  }));
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
-  const refreshAuctions = useCallback(async () => {
+  const loadAuctions = useCallback(() => request('/auctions')
+    .then(data => { setAuctions(data); setLoadError(''); })
+    .catch(() => setLoadError('Could not load listings. Check your connection and try again.'))
+    .finally(() => setIsLoading(false)), []);
+  const refreshAuctions = useCallback(() => {
     setIsLoading(true);
-    try { setAuctions(await request('/auctions')); setLoadError(''); }
-    catch { setLoadError('Could not load listings. Check your connection and try again.'); }
-    finally { setIsLoading(false); }
-  }, []);
+    return loadAuctions();
+  }, [loadAuctions]);
 
   // Initialize Socket.io connection and REST API sync
   useEffect(() => {
-    const newSocket = io(SOCKET_URL, {
-      reconnectionAttempts: 5,
-      timeout: 3000
-    });
+    const newSocket = socket;
 
     newSocket.on('connect', () => {
       console.log('✅ Connected to backend WebSocket server!');
@@ -135,15 +132,16 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       ]);
     });
 
-    setSocket(newSocket);
+    newSocket.connect();
 
-    void refreshAuctions();
+    void loadAuctions();
     if (localStorage.getItem('auction-token')) request('/auth/me').then(data => setUser(data.user)).catch(() => localStorage.removeItem('auction-token'));
 
     return () => {
+      newSocket.off();
       newSocket.disconnect();
     };
-  }, [refreshAuctions]);
+  }, [socket, loadAuctions, refreshAuctions]);
 
   useEffect(() => {
     if (!user.id) return;
@@ -163,21 +161,15 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // Subscribe selected item to Socket room
   useEffect(() => {
-    if (socket && selectedItem) {
-      socket.emit('join-auction', selectedItem.id);
-      return () => {
-        socket.emit('leave-auction', selectedItem.id);
-      };
-    }
-  }, [socket, selectedItem]);
-
-  // Keep selected item updated when auctions state changes
-  useEffect(() => {
-    if (selectedItem) {
-      const updated = auctions.find(a => a.id === selectedItem.id);
-      if (updated) setSelectedItem(updated);
-    }
-  }, [auctions]);
+    if (!selectedItemId) return;
+    const join = () => socket.emit('join-auction', selectedItemId);
+    if (socket.connected) join();
+    socket.on('connect', join);
+    return () => {
+      socket.off('connect', join);
+      socket.emit('leave-auction', selectedItemId);
+    };
+  }, [socket, selectedItemId]);
 
   const notify = (message: string) => setLiveNotifications(prev => [{ id: crypto.randomUUID(), message, timestamp: new Date().toLocaleTimeString() }, ...prev.slice(0, 4)]);
   const authenticate = async (email: string, password: string, name?: string): Promise<ActionResult> => {
@@ -256,6 +248,8 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       setSearchQuery,
       selectedItem,
       setSelectedItem,
+      recentItemIds,
+      clearRecentHistory,
       isCreateModalOpen,
       setIsCreateModalOpen: open => { if (!open || user.id) setIsCreateModalOpen(open); else window.dispatchEvent(new Event("auction-sign-in")); },
       placeBid,
@@ -276,10 +270,4 @@ export const AuctionProvider: React.FC<{ children: ReactNode }> = ({ children })
       {children}
     </AuctionContext.Provider>
   );
-};
-
-export const useAuction = () => {
-  const context = useContext(AuctionContext);
-  if (!context) throw new Error('useAuction must be used within an AuctionProvider');
-  return context;
 };

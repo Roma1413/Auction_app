@@ -3,11 +3,12 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const groups = {
-  frontend: ['api-response', 'marketplace', 'pwa'],
-  backend: ['seller-controls', 'health'],
+  frontend: ['api-response', 'marketplace', 'pwa', 'auction-context'],
+  backend: ['seller-controls', 'health', 'scheduler', 'prisma-config'],
   integration: ['pwa-server'],
   health: ['health'],
   smoke: ['smoke-check'],
+  context: ['auction-context'],
 };
 const group = process.argv[2] || 'all';
 const tests = group === 'all' ? [...groups.frontend, ...groups.backend, ...groups.integration, ...groups.smoke] : groups[group];
@@ -28,7 +29,8 @@ for (const test of tests) {
   console.log(`\nRunning ${test}`);
   const result = spawnSync(process.execPath, [
     '--experimental-strip-types',
-    ...(test === 'health' || test === 'smoke-check' ? ['--test'] : []),
+    ...(test === 'auction-context' ? ['--import', './server/node_modules/tsx/dist/loader.mjs'] : []),
+    ...(['health', 'smoke-check', 'auction-context', 'scheduler', 'prisma-config'].includes(test) ? ['--test'] : []),
     `tests/${test}.mjs`,
   ], { cwd: root, env, stdio: 'inherit', windowsHide: true, timeout: 60000 });
   if (result.error) console.error(`Could not complete ${test}: ${result.error.code || 'process error'}`);

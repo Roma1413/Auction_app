@@ -6,7 +6,7 @@ import {
   ArrowUpRight,
   ArrowRight
 } from 'lucide-react';
-import { useAuction } from '../context/AuctionContext';
+import { useAuction } from '../context/useAuction';
 import type { AuctionItem } from '../types/auction';
 import { AuctionCard } from './AuctionCard';
 import { DEFAULT_FILTERS, matchesFilters, type MarketplaceFilters } from '../utils/marketplace';

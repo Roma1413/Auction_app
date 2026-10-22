@@ -13,7 +13,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import type { AuctionItem } from '../types/auction';
-import { useAuction } from '../context/AuctionContext';
+import { useAuction } from '../context/useAuction';
 import { formatPrice, formatTimeAgo } from '../utils/timeFormat';
 import { CountdownTimer } from './CountdownTimer';
 import { SellerControls } from './SellerControls';

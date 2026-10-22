@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { X, Image as ImageIcon, Gavel, DollarSign, Clock, Camera } from 'lucide-react';
-import { useAuction } from '../context/AuctionContext';
+import { useAuction } from '../context/useAuction';
 import type { ItemCondition } from '../types/auction';
 import { prepareProductPhoto } from '../utils/productPhoto';
 

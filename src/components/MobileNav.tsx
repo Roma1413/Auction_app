@@ -1,5 +1,5 @@
 import { Home, Heart, Plus, Bell, UserRound } from 'lucide-react';
-import { useAuction } from '../context/AuctionContext';
+import { useAuction } from '../context/useAuction';
 
 export function MobileNav({ onOpenDashboard }: { onOpenDashboard: (tab: 'watchlist' | 'listings') => void }) {
   const { user, setSearchQuery, setActiveCategory, setIsCreateModalOpen, liveNotifications } = useAuction();

@@ -54,6 +54,7 @@ Useful commands after installation:
 | `npm run build:all` | Build frontend/backend; generate Prisma Client first |
 | `npm test` | Run all tests; requires Prisma generation and both builds |
 | `npm run test:health` | Health tests with injected DB probes; requires backend build |
+| `npm run test:context` | React/jsdom and local Socket.IO regression test; install both packages first |
 | `npm run test:smoke` | Smoke CLI tests against local HTTP fixtures; only Node required |
 | `npm --prefix server run check` | Generate, lint, build, and test backend; install both packages first |
 | `npm run smoke -- http://localhost:4000` | Read-only liveness/readiness check against a running service |

@@ -45,8 +45,13 @@ static/API routing, and seller close rules with mocked transactions. New health
 tests use a real local Express listener and injected successful, failed, hung,
 and recovering probes. Smoke tests exercise the CLI and local HTTP fixtures for
 success, 503, invalid payloads/statuses/content types/redirects, connection refusal,
-and both header/body timeouts. No browser automation or real PostgreSQL business
-integration suite is included.
+and both header/body timeouts. A React/jsdom regression with a local Socket.IO
+server also covers recent-history ordering/persistence/clearing, selected-listing
+updates, reconnect room joins, failed-refresh recovery, and Strict Mode cleanup.
+Backend compatibility tests exercise the real node-cron v4 task API with mocked
+database calls and Prisma config loading with the patched merge library. These
+are local fixtures; no browser automation or real PostgreSQL business integration
+suite is included.
 
 Known source-level limits to keep visible during manual testing:
 
