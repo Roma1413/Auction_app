@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AuctionProvider, useAuction } from './context/AuctionContext';
+import { AuctionProvider } from './context/AuctionContext';
+import { useAuction } from './context/useAuction';
 import { Navbar } from './components/Navbar';
 import { AccountBar } from './components/AccountBar';
 import { RecentlyViewed } from './components/RecentlyViewed';

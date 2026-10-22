@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Gavel, Search, Heart, Plus, Bell, X, ArrowUpRight, LogOut, UserRound } from 'lucide-react';
-import { useAuction } from '../context/AuctionContext';
+import { useAuction } from '../context/useAuction';
 
 interface NavbarProps { onOpenDashboard: (tab?: 'watchlist' | 'bids' | 'listings') => void }
 export function Navbar({ onOpenDashboard }: NavbarProps) {

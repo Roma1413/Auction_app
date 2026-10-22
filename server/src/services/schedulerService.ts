@@ -6,7 +6,7 @@ export function startAuctionScheduler(io: Server) {
   console.log('⏰ Starting background auction status scheduler...');
 
   // Check every 10 seconds for ended auctions
-  cron.schedule('*/10 * * * * *', async () => {
+  return cron.schedule('*/10 * * * * *', async () => {
     try {
       const now = new Date();
 

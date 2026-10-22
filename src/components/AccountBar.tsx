@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Eye, EyeOff, Gavel, LockKeyhole, Mail, UserRound, X } from 'lucide-react';
-import { useAuction } from '../context/AuctionContext';
+import { useAuction } from '../context/useAuction';
 import { GoogleSignIn } from './GoogleSignIn';
 
 export function AccountBar() {

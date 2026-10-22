@@ -1,5 +1,9 @@
 # Actual verification results — AUC-XX
 
+The [2026-10-22 follow-up](#2026-10-22--react-warning-and-dependency-cleanup)
+below records the resolved lint and audit findings. The original results remain
+as a historical record.
+
 Verification date: 2026-10-21 (user timezone Asia/Qyzylorda).
 Baseline revision: `4f81092`, plus the uncommitted AUC-XX working changes.
 Environment: Windows PowerShell, Node **v24.11.1**, npm **11.6.2**. CI and Render
@@ -84,3 +88,50 @@ observation, not a measured production latency indicator.
 | Node 22 / Ubuntu runtime | **Not executed** — available local runtime is Node 24 on Windows. CI is configured to verify Node 22 on Ubuntu after a future push. |
 | Browser OAuth success, visual/mobile/accessibility/end-to-end testing | **Not executed** — requires separate browser/account/configuration sessions. Only existing invalid Google token handling was exercised. |
 | Availability/latency monitoring over time | **Not executed** — no external monitor or metrics collection configured. Targets in operations.md are proposals only. |
+
+## 2026-10-22 — React warning and dependency cleanup
+
+Environment remains Windows PowerShell, Node v24.11.1 and npm 11.6.2. This
+follow-up resolves the previously recorded seven lint warnings (including the
+unused catch parameter fixed in the preceding cleanup) and five backend audit
+entries. No lint rules or audit exclusions were added.
+
+React changes move recent-view tracking to selection events and persist it in
+an effect, derive selected details from current auctions, and separate the hook
+from the provider component for Fast Refresh. The socket is created disconnected;
+its effect registers handlers, connects, and cleans up. Selected rooms rejoin on
+reconnect. Loading failures still retain listings and display the existing error.
+
+The backend upgrades node-cron 3.0.3 to 4.6.0 and removes its obsolete external
+types; the ten-second cron expression is unchanged. Prisma and Prisma Client
+remain at 6.19.3. A scoped @prisma/config override supplies deepmerge-ts 8.0.2.
+The root package adds jsdom 26.1.0 for the React regression fixture and reuses
+the backend's existing tsx loader; no new test framework is introduced.
+
+| Command / check | Actual result |
+| --- | --- |
+| `npm ci --include=dev` | Passed with updated lockfile: 94 packages added, 0 reported vulnerabilities. Deprecation notice for transitive whatwg-encoding remains. |
+| `npm --prefix server ci --include=dev` | Passed with updated lockfile and override: 189 packages added, 0 reported vulnerabilities. Transitive node-domexception deprecation notice remains. |
+| `npm run check` | Passed after both fresh installs, exit 0: Prisma generation, lint, frontend build, backend build, and all ten test files. Explicit unavailable loopback DB URLs were set; no production database was accessed. |
+| `npm run lint` (inside final check) | Passed with **0 warnings and 0 errors**. |
+| React/jsdom + local Socket.IO regression | Passed: history filtering/order/limit/persistence/clear/reopen; live selected price; no duplicate bid handlers in Strict Mode; no room churn on price changes; reconnect/rejoin; refreshed sale state; failed-refresh recovery; unmount disconnect. |
+| Scheduler compatibility regression | Passed using real node-cron v4 task APIs and mocked Prisma delegates: automatic startup, next three runs ten seconds apart, qualifying/reserve-not-met/no-bid expiry, stale-update guard, and retained database-error handling. The callback is invoked via `task.execute()`; this does not claim a real timed database outage drill. |
+| Prisma config compatibility regression | Passed: load a temporary TypeScript Prisma config with the actual @prisma/config library, merge nested objects, and handle recursive inputs with the patched library. No schema mutation or DB connection. |
+| Existing test suites | All passed, including 5 health tests, 19 smoke tests/subtests, and existing seller, marketplace, PWA, API-response, and production-routing checks. |
+| `npm audit --json` | Passed: empty vulnerabilities object, total 0. |
+| `npm --prefix server audit --json` | Passed: empty vulnerabilities object, total 0. |
+| `git diff --check` | Passed after removing an extra EOF blank line. |
+
+During implementation, a direct backend build before Prisma regeneration reported
+missing generated type information; generation through the check command resolved
+it. An initial full check then stopped in the new scheduler regression because
+Node's descriptor-based mock helper cannot replace a Prisma proxy delegate. The
+test now temporarily replaces/restores those methods directly, as the existing
+seller tests do; the backend group and final full check both passed afterward.
+
+The original manual business flows, real PostgreSQL recovery, Node 22/Linux,
+hosted CI, Render deployment/rollback, and visual/browser tests remain **Not
+executed** for the reasons in the table above. jsdom verifies React behavior in
+a simulated DOM; it does not prove browser rendering or performance. Audit results
+are a point-in-time report of known advisories, not a blanket security claim.
+No commit, push, PR, deployment, or production-data modification was performed.

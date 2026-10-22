@@ -2,7 +2,7 @@ import express, { type ErrorRequestHandler } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import { validateDatabaseConfiguration } from './config.js';
 import { fileURLToPath } from 'node:url';
 import { prisma } from './db.js';
 
@@ -13,7 +13,12 @@ import { createHealthRouter } from './routes/healthRoutes.js';
 import { setupSocketHandlers } from './socket.js';
 import { startAuctionScheduler } from './services/schedulerService.js';
 
-dotenv.config();
+try {
+  validateDatabaseConfiguration();
+} catch (error) {
+  console.error(error instanceof Error ? error.message : 'Invalid database configuration.');
+  process.exit(1);
+}
 
 const app = express();
 const httpServer = createServer(app);

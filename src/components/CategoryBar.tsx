@@ -8,7 +8,7 @@ import {
   Guitar,
   Grid
 } from 'lucide-react';
-import { useAuction } from '../context/AuctionContext';
+import { useAuction } from '../context/useAuction';
 
 export const CategoryBar: React.FC = () => {
   const { activeCategory, setActiveCategory, auctions } = useAuction();

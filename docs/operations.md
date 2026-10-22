@@ -17,10 +17,11 @@ only a local PostgreSQL 16 database. No architecture change is required.
 
 | Variable | Purpose / example without real credentials |
 | --- | --- |
-| `DATABASE_URL` | Runtime PostgreSQL URL, e.g. `postgresql://postgres:postgres@127.0.0.1:5432/auction_db?connect_timeout=2&pool_timeout=2` for Compose only |
+| `DATABASE_URL` | Runtime PostgreSQL URL, e.g. `postgresql://<user>:<password>@127.0.0.1:15432/auction_db?connect_timeout=2&pool_timeout=2` for Compose only |
 | `DIRECT_URL` | Direct/session URL for reviewed Prisma schema administration; use the same local URL for Compose |
 | `JWT_SECRET` | Unique random private secret; required for production startup |
 | `PORT` | Local default `4000`; Render supplies its port |
+| `POSTGRES_PORT` | Compose host port, default `15432`; bind is restricted to `127.0.0.1` |
 | `NODE_ENV` | `production` to serve the built frontend from Express |
 | `GOOGLE_CLIENT_ID` | Optional public Google web client ID for backend token verification |
 | `VITE_GOOGLE_CLIENT_ID` | Matching public client ID baked into the frontend build; never put a secret in `VITE_*` |
@@ -43,11 +44,14 @@ npm run check
 ```
 
 `check` generates Prisma Client, lints frontend/backend/scripts/tests, builds both
-packages, and runs all seven test files. `npm test` alone requires generated
+packages, and runs all default test files. `npm test` alone requires generated
 Prisma Client and **both builds already present**. `npm run test:health` requires
 the backend build; `npm run test:smoke` needs only Node. `npm --prefix server run
-check` generates the client, lints/builds the backend, and runs seller/health tests;
-it also requires the root dependencies for the shared linter.
+check` generates the client, lints/builds the backend, and runs seller, health,
+scheduler, and Prisma-config tests;
+it also requires the root dependencies for the shared linter. `npm run test:context`
+uses jsdom and the existing backend tsx loader to exercise React state and a local
+Socket.IO server without a database.
 
 Checks never provision schemas or seed data. The test runner overrides inherited
 database URLs with an unavailable loopback address before loading application
@@ -67,11 +71,18 @@ npm run dev:all
 
 Compose's named volume persists data and does not apply the Prisma schema. For
 a **new disposable local database only**, an operator may explicitly initialize
-it with `npm --prefix server run db:push` after verifying both URLs point to that
+it with `npm --prefix server run db:deploy` after verifying both URLs point to that
 local database. This is not part of checks, deployment, or the smoke script.
 Never use seed, schema push, or ad hoc migration commands on an existing remote
 database. The seed script deletes data. No database initialization was performed
 as part of AUC-XX verification.
+
+The current local database now has a validated initial Prisma migration baseline.
+Normal deployments use `db:deploy` and `db:status`, without resetting existing
+tables. The opt-in `npm run test:postgres` creates a separate, retained local
+test database, deploys migrations there, and exercises the real API, sockets,
+and React context. See [database migrations](database-migrations.md) for safety
+guards, baseline commands, and retained test-data handling.
 
 For production-style local startup, build first with `npm run build:all`, set
 `NODE_ENV=production` and a unique `JWT_SECRET` using your shell/environment, then
@@ -168,6 +179,30 @@ Destructive/renamed columns may make rollback unsafe. Use a reviewed forward fix
 or a coordinated restore from a tested backup/PITR plan; restoration may lose
 newer data and requires its own authorization. Never seed or force schema push as
 a rollback. Backup restoration and Render rollback have not been exercised here.
+
+## Dependency maintenance
+
+The backend retains Prisma 6 and scopes a `deepmerge-ts: 8.0.2` override to
+`@prisma/config`. The [security advisory](https://github.com/advisories/GHSA-ggr8-5vv4-36mx)
+identifies 8.0.0 as the patched line. This avoids changing the Prisma major version
+or schema architecture. A regression test loads a real Prisma TypeScript config,
+checks nested merging, and exercises recursive inputs. Revisit the override when
+the maintained Prisma dependency range includes the patched library; do not
+remove it just because a normal install succeeds.
+
+`node-cron` is updated to 4.6.0, removing its vulnerable uuid dependency. Its
+[v3-to-v4 migration guide](https://www.nodecron.com/migrating-from-v3.html) confirms
+the default import and automatically starting `schedule` API used here remain
+available. The application still uses `*/10 * * * * *`. The scheduler now returns
+its task handle for lifecycle testing; existing startup callers can ignore it.
+Types ship with v4, so the old `@types/node-cron` package is removed.
+
+The React regression fixture uses jsdom 26.1 with the existing tsx loader and
+real React/Socket.IO code. It is a development dependency and does not ship in
+the frontend bundle. npm may still print deprecation notices for transitive
+`whatwg-encoding` (jsdom) and `node-domexception` (Google authentication).
+Deprecations and vulnerability advisories are separate; audit results describe
+the advisories available at verification time, not a permanent security guarantee.
 
 ## Proposed indicators (not measured service results)
 

@@ -16,7 +16,9 @@
     "test:health": "node scripts/run-tests.mjs health",
     "test:smoke": "node scripts/run-tests.mjs smoke",
     "check": "npm --prefix server run db:generate && npm run lint && npm run build:all && npm test",
-    "smoke": "node scripts/smoke-check.mjs"
+    "smoke": "node scripts/smoke-check.mjs",
+    "test:context": "node scripts/run-tests.mjs context",
+    "test:postgres": "node scripts/run-postgres-tests.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -35,6 +37,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^26.1.0",
     "oxlint": "^1.81.0",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"

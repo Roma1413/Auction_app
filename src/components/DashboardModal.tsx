@@ -1,7 +1,7 @@
 import { useNow } from '../utils/useNow';
 import { useState } from 'react';
 import { X, Heart, Gavel, Package, Trophy, ArrowUpRight } from 'lucide-react';
-import { useAuction } from '../context/AuctionContext';
+import { useAuction } from '../context/useAuction';
 import type { AuctionItem } from '../types/auction';
 import { formatPrice } from '../utils/timeFormat';
 import { CountdownTimer } from './CountdownTimer';
