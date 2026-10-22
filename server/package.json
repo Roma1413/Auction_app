@@ -12,6 +12,8 @@
     "db:studio": "prisma studio",
     "db:check": "tsx src/checkDatabase.ts",
     "db:generate": "prisma generate",
+    "db:deploy": "prisma migrate deploy",
+    "db:status": "prisma migrate status",
     "lint": "npm --prefix .. run lint:backend",
     "test": "node ../scripts/run-tests.mjs backend",
     "check": "npm run db:generate && npm run lint && npm run build && npm test"

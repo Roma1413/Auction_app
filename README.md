@@ -18,6 +18,17 @@ Run `npm --prefix server run db:check` to check connectivity and list actual for
 Run `npm --prefix server run db:studio` to browse tables.
 The old server/prisma/dev.db SQLite file is not used.
 
+For local PostgreSQL, start Docker Desktop, run `docker compose up -d postgres`,
+and set both database URLs in `server/.env` to
+`postgresql://<user>:<password>@127.0.0.1:15432/auction_db?connect_timeout=2&pool_timeout=2`
+using the credentials configured for the local Compose service.
+Compose exposes PostgreSQL only on localhost, using port 15432 by default to avoid
+conflicts with installed database services; `POSTGRES_PORT` can override it.
+Set a private random `JWT_SECRET` there as well. For a new empty local database,
+run `npm --prefix server run db:deploy` once to create the tables, then start the app
+with `npm run dev:all`. The backend loads `server/.env` regardless of the launch
+directory and exits with a setup message if `DATABASE_URL` is missing.
+
 | Child field | Parent field | Relationship |
 | --- | --- | --- |
 | Auction.sellerId | User.id | One seller has many auctions |
@@ -31,6 +42,15 @@ The unique Watchlist(userId, auctionId) constraint prevents duplicates. These Us
 Bids, listings, purchases, and watchlists now use authenticated API requests. Failed requests display an error rather than simulating success. Buy now records a sale and purchaser; it does not process payments or transfer balances.
 
 ## Setup and verification
+
+Prisma migrations are now versioned. Use `npm --prefix server run db:deploy` for
+fresh databases and reviewed deployments, and `npm --prefix server run db:status`
+to inspect migration history. The existing local database is already baselined.
+See [migration and isolated-test instructions](docs/database-migrations.md).
+Run `npm run test:postgres` for opt-in PostgreSQL/HTTP/Socket.IO/React workflows;
+it creates and retains a separate test database and never resets working data.
+The [workflow verification report](docs/auction-workflow-verification.md) records
+actual test results, concurrency behavior, data preservation, and remaining limits.
 
 Use Node 22.12+ (Node 22 in `.nvmrc`, CI, and Render; local Node 24 is also supported).
 Install from both committed lockfiles, including build tools:

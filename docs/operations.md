@@ -17,10 +17,11 @@ only a local PostgreSQL 16 database. No architecture change is required.
 
 | Variable | Purpose / example without real credentials |
 | --- | --- |
-| `DATABASE_URL` | Runtime PostgreSQL URL, e.g. `postgresql://postgres:postgres@127.0.0.1:5432/auction_db?connect_timeout=2&pool_timeout=2` for Compose only |
+| `DATABASE_URL` | Runtime PostgreSQL URL, e.g. `postgresql://<user>:<password>@127.0.0.1:15432/auction_db?connect_timeout=2&pool_timeout=2` for Compose only |
 | `DIRECT_URL` | Direct/session URL for reviewed Prisma schema administration; use the same local URL for Compose |
 | `JWT_SECRET` | Unique random private secret; required for production startup |
 | `PORT` | Local default `4000`; Render supplies its port |
+| `POSTGRES_PORT` | Compose host port, default `15432`; bind is restricted to `127.0.0.1` |
 | `NODE_ENV` | `production` to serve the built frontend from Express |
 | `GOOGLE_CLIENT_ID` | Optional public Google web client ID for backend token verification |
 | `VITE_GOOGLE_CLIENT_ID` | Matching public client ID baked into the frontend build; never put a secret in `VITE_*` |
@@ -43,7 +44,7 @@ npm run check
 ```
 
 `check` generates Prisma Client, lints frontend/backend/scripts/tests, builds both
-packages, and runs all ten test files. `npm test` alone requires generated
+packages, and runs all default test files. `npm test` alone requires generated
 Prisma Client and **both builds already present**. `npm run test:health` requires
 the backend build; `npm run test:smoke` needs only Node. `npm --prefix server run
 check` generates the client, lints/builds the backend, and runs seller, health,
@@ -70,11 +71,18 @@ npm run dev:all
 
 Compose's named volume persists data and does not apply the Prisma schema. For
 a **new disposable local database only**, an operator may explicitly initialize
-it with `npm --prefix server run db:push` after verifying both URLs point to that
+it with `npm --prefix server run db:deploy` after verifying both URLs point to that
 local database. This is not part of checks, deployment, or the smoke script.
 Never use seed, schema push, or ad hoc migration commands on an existing remote
 database. The seed script deletes data. No database initialization was performed
 as part of AUC-XX verification.
+
+The current local database now has a validated initial Prisma migration baseline.
+Normal deployments use `db:deploy` and `db:status`, without resetting existing
+tables. The opt-in `npm run test:postgres` creates a separate, retained local
+test database, deploys migrations there, and exercises the real API, sockets,
+and React context. See [database migrations](database-migrations.md) for safety
+guards, baseline commands, and retained test-data handling.
 
 For production-style local startup, build first with `npm run build:all`, set
 `NODE_ENV=production` and a unique `JWT_SECRET` using your shell/environment, then
