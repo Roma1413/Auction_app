@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="900" viewBox="0 0 1100 900"><rect width="100%" height="100%" fill="white"/><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/></marker></defs>
+<text x="30" y="35" font-family="Arial" font-size="23" font-weight="bold" fill="#172b3a">AuctionPro Draft Component Diagram</text>
+<rect x="365" y="65" width="690" height="560" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="8 5"/><text x="380" y="90" font-family="Arial" font-size="17" fill="#334155">One Node process in production</text>
+<line x1="290" y1="190" x2="405" y2="190" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="308.7" y="159" width="72.60000000000001" height="19" fill="white"/><text x="345" y="174" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">HTTP JSON</text>
+<line x1="680" y1="210" x2="745" y2="210" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="696.2" y="178" width="35.6" height="19" fill="white"/><text x="714" y="193" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">Emit</text>
+<polyline points="880,145 880,110 160,110 160,155" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="353.2" y="118" width="183.60000000000002" height="19" fill="white"/><text x="445" y="133" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">Socket.IO event delivery</text>
+<line x1="150" y1="280" x2="150" y2="440" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="84.1" y="344" width="131.8" height="19" fill="white"/><text x="150" y="359" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">Local persistence</text>
+<line x1="540" y1="270" x2="540" y2="415" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="554.3" y="335" width="87.4" height="19" fill="white"/><text x="598" y="350" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">Data access</text>
+<line x1="745" y1="460" x2="680" y2="460" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="690.5" y="428" width="43.0" height="19" fill="white"/><text x="712" y="443" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">Query</text>
+<line x1="880" y1="415" x2="880" y2="270" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="892.6" y="335" width="94.80000000000001" height="19" fill="white"/><text x="940" y="350" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">Expiry event</text>
+<polyline points="405,460 345,460 345,710 415,710" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="360.9" y="635" width="28.200000000000003" height="19" fill="white"/><text x="375" y="650" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">SQL</text>
+<line x1="680" y1="605" x2="680" y2="670" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<rect x="693.4" y="633" width="65.2" height="19" fill="white"/><text x="726" y="648" text-anchor="middle" font-family="Arial" font-size="13" fill="#334155">DB probe</text>
+<rect x="35" y="155" width="255" height="125" rx="8" fill="#eef4f7" stroke="#334155" stroke-width="1.6"/>
+<text x="162.5" y="200.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">React UI</text>
+<text x="162.5" y="221.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Components and context</text>
+<text x="162.5" y="242.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">API response utility</text>
+<rect x="30" y="440" width="265" height="125" rx="8" fill="#eef4f7" stroke="#334155" stroke-width="1.6"/>
+<text x="162.5" y="485.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Browser storage and PWA</text>
+<text x="162.5" y="506.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Token history saved searches</text>
+<text x="162.5" y="527.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Static cache and offline page</text>
+<rect x="405" y="145" width="275" height="125" rx="8" fill="#eef4f7" stroke="#334155" stroke-width="1.6"/>
+<text x="542.5" y="190.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Express routers</text>
+<text x="542.5" y="211.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">JWT middleware</text>
+<text x="542.5" y="232.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Auth auction user controllers</text>
+<rect x="745" y="145" width="270" height="125" rx="8" fill="#eef4f7" stroke="#334155" stroke-width="1.6"/>
+<text x="880.0" y="190.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Socket.IO server</text>
+<text x="880.0" y="211.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Global committed updates</text>
+<text x="880.0" y="232.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Room join and leave handlers</text>
+<rect x="405" y="415" width="275" height="90" rx="8" fill="#eef4f7" stroke="#334155" stroke-width="1.6"/>
+<text x="542.5" y="454.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Prisma client</text>
+<text x="542.5" y="475.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Guarded transactions</text>
+<rect x="745" y="415" width="270" height="90" rx="8" fill="#eef4f7" stroke="#334155" stroke-width="1.6"/>
+<text x="880.0" y="454.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">node cron scheduler</text>
+<text x="880.0" y="475.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Expiry checks every 10 s</text>
+<rect x="405" y="540" width="275" height="65" rx="8" fill="#eef4f7" stroke="#334155" stroke-width="1.6"/>
+<text x="542.5" y="566.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Health and readiness</text>
+<text x="542.5" y="587.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">SELECT 1 with HTTP deadline</text>
+<rect x="415" y="670" width="335" height="100" rx="18" fill="#e8f1ee" stroke="#334155" stroke-width="1.6"/>
+<text x="582.5" y="703.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">PostgreSQL</text>
+<text x="582.5" y="724.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">User Auction Bid</text>
+<text x="582.5" y="745.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Watchlist Notification</text>
+<text x="30" y="853" font-family="Arial" font-size="14" fill="#475569">Local development adds Vite proxying. Production serves the built frontend from Express.</text>
+<text x="30" y="875" font-family="Arial" font-size="14" fill="#475569">All components shown are present in the tag; continuous monitoring and distributed scaling are future work.</text>
+</svg>

@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device" version="24.7.17">
+  <diagram name="AuctionPro Draft Component Diagram" id="03_draft_components">
+    <mxGraphModel dx="1100" dy="900" grid="1" gridSize="10" page="1" pageWidth="1100" pageHeight="900">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="process" value="One Node process in production" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacing=12;fillColor=#f8fafc;strokeColor=#94a3b8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="365" y="65" width="690" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="e0" value="HTTP JSON" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="ui" target="api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="Emit" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="api" target="socket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="Socket.IO event delivery" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="socket" target="ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="110" />
+              <mxPoint x="160" y="110" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="Local persistence" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="ui" target="browser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="Data access" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="api" target="prisma">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="Query" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="scheduler" target="prisma">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="Expiry event" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="scheduler" target="socket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="SQL" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="prisma" target="db">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="345" y="460" />
+              <mxPoint x="345" y="710" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" value="DB probe" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="health" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ui" value="React UI&#10;Components and context&#10;API response utility" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="35" y="155" width="255" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="Browser storage and PWA&#10;Token history saved searches&#10;Static cache and offline page" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="30" y="440" width="265" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="Express routers&#10;JWT middleware&#10;Auth auction user controllers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="405" y="145" width="275" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="socket" value="Socket.IO server&#10;Global committed updates&#10;Room join and leave handlers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="745" y="145" width="270" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="prisma" value="Prisma client&#10;Guarded transactions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="405" y="415" width="275" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="scheduler" value="node cron scheduler&#10;Expiry checks every 10 s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="745" y="415" width="270" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="health" value="Health and readiness&#10;SELECT 1 with HTTP deadline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="405" y="540" width="275" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="PostgreSQL&#10;User Auction Bid&#10;Watchlist Notification" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#e8f1ee;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="415" y="670" width="335" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

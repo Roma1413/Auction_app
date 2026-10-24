@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="950" viewBox="0 0 1080 950"><rect width="100%" height="100%" fill="white"/><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/></marker></defs>
+<text x="30" y="35" font-family="Arial" font-size="23" font-weight="bold" fill="#172b3a">AuctionPro UML Use Cases</text>
+<rect x="245" y="65" width="590" height="760" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="8 5"/><text x="260" y="90" font-family="Arial" font-size="17" fill="#334155">AuctionPro application</text>
+<line x1="135" y1="160" x2="400" y2="145" stroke="#475569" stroke-width="1.7"/>
+<line x1="135" y1="185" x2="400" y2="250" stroke="#475569" stroke-width="1.7"/>
+<line x1="925" y1="200" x2="680" y2="255" stroke="#475569" stroke-width="1.7"/>
+<line x1="135" y1="420" x2="400" y2="365" stroke="#475569" stroke-width="1.7"/>
+<line x1="135" y1="440" x2="400" y2="475" stroke="#475569" stroke-width="1.7"/>
+<line x1="135" y1="460" x2="400" y2="585" stroke="#475569" stroke-width="1.7"/>
+<line x1="135" y1="690" x2="400" y2="695" stroke="#475569" stroke-width="1.7"/>
+<line x1="135" y1="720" x2="400" y2="780" stroke="#475569" stroke-width="1.7"/>
+<g fill="none" stroke="#334155" stroke-width="2"><circle cx="100.0" cy="139" r="11"/><path d="M100.0,150 L100.0,185 M70,162 L130,162 M100.0,185 L71,210 M100.0,185 L129,210"/></g>
+<text x="100.0" y="232" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Visitor</text>
+<g fill="none" stroke="#334155" stroke-width="2"><circle cx="100.0" cy="404" r="11"/><path d="M100.0,415 L100.0,450 M70,427 L130,427 M100.0,450 L71,475 M100.0,450 L129,475"/></g>
+<text x="100.0" y="497" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Buyer</text>
+<g fill="none" stroke="#334155" stroke-width="2"><circle cx="100.0" cy="664" r="11"/><path d="M100.0,675 L100.0,710 M70,687 L130,687 M100.0,710 L71,735 M100.0,710 L129,735"/></g>
+<text x="100.0" y="757" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Seller</text>
+<g fill="none" stroke="#334155" stroke-width="2"><circle cx="960.0" cy="149" r="11"/><path d="M960.0,160 L960.0,195 M930,172 L990,172 M960.0,195 L931,220 M960.0,195 L989,220"/></g>
+<text x="960.0" y="242" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Google Identity</text>
+<ellipse cx="540.0" cy="145.0" rx="140.0" ry="35.0" fill="white" stroke="#334155" stroke-width="1.6"/>
+<text x="540.0" y="140.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Browse search</text>
+<text x="540.0" y="161.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">and filter</text>
+<ellipse cx="540.0" cy="255.0" rx="140.0" ry="35.0" fill="white" stroke="#334155" stroke-width="1.6"/>
+<text x="540.0" y="250.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Register or sign in</text>
+<text x="540.0" y="271.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Password or Google</text>
+<ellipse cx="540.0" cy="365.0" rx="140.0" ry="35.0" fill="white" stroke="#334155" stroke-width="1.6"/>
+<text x="540.0" y="370.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Submit competing bid</text>
+<ellipse cx="540.0" cy="475.0" rx="140.0" ry="35.0" fill="white" stroke="#334155" stroke-width="1.6"/>
+<text x="540.0" y="470.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Buy now</text>
+<text x="540.0" y="491.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Record sale only</text>
+<ellipse cx="540.0" cy="585.0" rx="140.0" ry="35.0" fill="white" stroke="#334155" stroke-width="1.6"/>
+<text x="540.0" y="580.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Manage watchlist</text>
+<text x="540.0" y="601.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">and account activity</text>
+<ellipse cx="540.0" cy="695.0" rx="140.0" ry="35.0" fill="white" stroke="#334155" stroke-width="1.6"/>
+<text x="540.0" y="690.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Publish listing</text>
+<text x="540.0" y="711.0" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">with product photo</text>
+<ellipse cx="540.0" cy="782.5" rx="140.0" ry="32.5" fill="white" stroke="#334155" stroke-width="1.6"/>
+<text x="540.0" y="777.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">Cancel auction or</text>
+<text x="540.0" y="798.5" text-anchor="middle" font-family="Arial" font-size="16" fill="#172b3a">accept highest bid</text>
+<text x="30" y="881" font-family="Arial" font-size="14" fill="#475569">Roles are contextual: the same signed in account can buy and sell, and can browse or sign in as a visitor.</text>
+<text x="30" y="903" font-family="Arial" font-size="14" fill="#475569">Bid, buy, watchlist, listing and seller actions require authentication as a precondition.</text>
+<text x="30" y="925" font-family="Arial" font-size="14" fill="#475569">Seller ownership is a server side precondition. This UML model was authored as editable diagrams.net XML.</text>
+</svg>

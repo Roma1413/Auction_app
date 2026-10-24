@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device" version="24.7.17">
+  <diagram name="AuctionPro System Context" id="01_system_context">
+    <mxGraphModel dx="1050" dy="620" grid="1" gridSize="10" page="1" pageWidth="1050" pageHeight="620">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="e0" value="HTTPS and Socket.IO" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="users" target="app">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="Prisma SQL" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="app" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="Identity token validation" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="app" target="google">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="Deploy and inspect" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="ops" target="render">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="Hosts" style="endArrow=block;html=1;edgeStyle=none;strokeColor=#475569;" edge="1" parent="1" source="render" target="app">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="users" value="Buyers and sellers" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="65" y="220" width="85" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="app" value="AuctionPro&#10;React frontend and&#10;Express auction service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="350" y="205" width="310" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="PostgreSQL&#10;Persistent application data" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#e8f1ee;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="760" y="220" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="google" value="Google Identity Services&#10;Optional sign in" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="365" y="65" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ops" value="Team operator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="65" y="400" width="85" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="render" value="Render hosting&#10;Configuration in snapshot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef4f7;strokeColor=#334155;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="370" y="430" width="290" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
