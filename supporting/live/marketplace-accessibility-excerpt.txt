@@ -1,0 +1,44 @@
+Observed: 2026-10-24T10:26:10.807Z (15:26:10.807 UTC+05:00)
+URL: https://auction-pro-gxcn.onrender.com/
+Source: excerpt of the current browser DOM accessibility snapshot.
+The existing browser session restored a signed-in account after loading. No new login was performed. This is separate from the three historical guest PNGs.
+
+- banner:
+  - button "Auction Pro home"
+  - searchbox "Search auctions"
+  - navigation "Account navigation":
+    - button "Watchlist"
+    - button "Notifications"
+    - button "Нұрбақ"
+    - button "Sell an item"
+  - generic: Live updates connected
+- button "All 9"
+- button "Watches & Jewelry 1"
+- button "Electronics 3"
+- button "Vehicles 2"
+- button "Collectibles & Art 0"
+- button "Gaming 1"
+- button "Music & Instruments 2"
+- main:
+  - heading "Good things. Great finds." [level=1]
+  - button "Explore the marketplace"
+  - button "Have something to sell?"
+  - heading "The marketplace 0 listings" [level=2]
+  - region "Marketplace filters":
+    - checkbox "Ending within an hour"
+    - spinbutton "Minimum price"
+    - spinbutton "Maximum price"
+    - combobox "Condition"
+    - combobox "Buying format"
+    - combobox "Availability":
+      - option "Active listings" [selected]
+      - option "Completed listings"
+      - option "All listings"
+    - combobox "Seller"
+  - heading "No auctions match your filters" [level=3]
+  - button "Browse all listings, including completed auctions"
+  - button "Create Auction Listing"
+- contentinfo:
+  - button "Install Auction Pro"
+
+This is an excerpt, not a full-page export, a WCAG audit or proof of authentication/bidding success.

@@ -1,0 +1,39 @@
+{
+  "assembled_at_utc": "2026-10-24T10:30:36.095681+00:00",
+  "record_type": "New observations; not reconstruction of the earlier approximately 02:59 record",
+  "observations": [
+    {
+      "method": "GET",
+      "url": "https://auction-pro-gxcn.onrender.com/api/health",
+      "observed_at_utc": "2026-10-24T10:25:54.142Z",
+      "observed_at_local": "2026-10-24T15:25:54.142000+05:00",
+      "method_of_observation": "Browser navigation; visible JSON response body read from page",
+      "response_body": {
+        "status": "ok"
+      },
+      "http_status": null,
+      "duration_ms": null,
+      "body_contract_matches_expected": true
+    },
+    {
+      "method": "GET",
+      "url": "https://auction-pro-gxcn.onrender.com/api/ready",
+      "observed_at_utc": "2026-10-24T10:25:58.719Z",
+      "observed_at_local": "2026-10-24T15:25:58.719000+05:00",
+      "method_of_observation": "Browser navigation; visible JSON response body read from page",
+      "response_body": {
+        "status": "ready",
+        "database": "connected"
+      },
+      "http_status": null,
+      "duration_ms": null,
+      "body_contract_matches_expected": true
+    }
+  ],
+  "limitations": [
+    "HTTP codes, headers and network durations were not measured.",
+    "Direct Python HTTP attempt failed with DNS error: getaddrinfo failed.",
+    "Browser first displayed Render Application loading / Service waking up; JSON became visible after startup and reload.",
+    "Smoke CLI was not rerun. These samples do not establish uptime, latency percentiles, deployed revision or load capacity."
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "assembled_at_utc": "2026-10-24T10:30:36.095681+00:00",
+  "images": [
+    {
+      "file": "live/guest-marketplace.png",
+      "description": "Report Figure 4: guest marketplace",
+      "source_document": "SE-2431_Bektasov_ProbPeriod1.pdf.docx",
+      "source_document_sha256": "f595a89857ec1f5e33b70ee2479159eecaf2a11a080a20a59f0ac895d90d8d97",
+      "source_member": "word/media/image4.png",
+      "sha256": "5e8ef8ec86ed1f577a42126ba4a97554cf658ab04ce3fb1325291fb1e4cfdacd",
+      "size_bytes": 63118,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "live/guest-sign-in.png",
+      "description": "Report Figure 5: sign-in dialog; not successful authentication",
+      "source_document": "SE-2431_Bektasov_ProbPeriod1.pdf.docx",
+      "source_document_sha256": "f595a89857ec1f5e33b70ee2479159eecaf2a11a080a20a59f0ac895d90d8d97",
+      "source_member": "word/media/image5.png",
+      "sha256": "69115ed4288acd89c043cd99e8b4569e11f02df096c0af1bea26107f1e0b3129",
+      "size_bytes": 41245,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "live/completed-listings.png",
+      "description": "Report Figure 6: completed listings; not an active bidding workflow",
+      "source_document": "SE-2431_Bektasov_ProbPeriod1.pdf.docx",
+      "source_document_sha256": "f595a89857ec1f5e33b70ee2479159eecaf2a11a080a20a59f0ac895d90d8d97",
+      "source_member": "word/media/image6.png",
+      "sha256": "e808d7dafc59b91883c38f5a8af36adaab06be1637f2e6aa1b6e15cbf2453495",
+      "size_bytes": 113876,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    }
+  ]
+}

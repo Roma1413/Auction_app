@@ -1,0 +1,7 @@
+New browser observations on 24 October 2026, UTC+05:00 (Asia/Qyzylorda)
+15:25:54.142 /api/health
+{"status":"ok"}
+15:25:58.719 /api/ready
+{"status":"ready","database":"connected"}
+HTTP status codes and request durations were not measured.
+The earlier approximately 02:59 record was not recovered.

@@ -1,0 +1,26 @@
+{
+  "assembled_at_utc": "2026-10-24T10:30:36.095681+00:00",
+  "sources": {
+    "report": {
+      "filename": "SE-2431_Bektasov_ProbPeriod1.pdf.docx",
+      "sha256": "f595a89857ec1f5e33b70ee2479159eecaf2a11a080a20a59f0ac895d90d8d97",
+      "size_bytes": 1483874,
+      "modified_at_utc": "2026-10-24T08:47:42.330999+00:00",
+      "note": "File modification time is not a screenshot capture date."
+    },
+    "tracking": {
+      "filename": "YouTrack Board.docx",
+      "sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "size_bytes": 5037678,
+      "modified_at_utc": "2026-10-23T21:28:57.557224+00:00",
+      "note": "File modification time is not a screenshot capture date."
+    },
+    "pdf": {
+      "filename": "YouTrack Board.pdf",
+      "sha256": "5338f24b71e74b8cb81105dfbb03d09022e0a556bd1140f7f7e7e7088ce68cab",
+      "size_bytes": 1156921,
+      "modified_at_utc": "2026-10-23T21:29:14.432789+00:00",
+      "note": "File modification time is not a screenshot capture date."
+    }
+  }
+}

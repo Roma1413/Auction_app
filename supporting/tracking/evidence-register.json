@@ -1,0 +1,122 @@
+{
+  "assembled_at_utc": "2026-10-24T10:30:36.095681+00:00",
+  "images": [
+    {
+      "file": "tracking/youtrack-board.png",
+      "description": "Board: DEMO-20 through DEMO-24 displayed in Done",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image1.png",
+      "sha256": "3fd47b840d5aa2396c772fe9d7ebcf77ba7e6b6d21825ff15c4ef64cbcc3b223",
+      "size_bytes": 205562,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "tracking/demo-20-details.png",
+      "description": "Historical DEMO-20 details",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image2.png",
+      "sha256": "9e0ec4a98f0b7413bbc8003f5185857d156d3e377e0b3bbdf780ee59227669ef",
+      "size_bytes": 200081,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "tracking/demo-20-editor-historical.png",
+      "description": "Historical editor view; draft fields may differ from current task",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image3.png",
+      "sha256": "ecc9efd661df55a67161a0416c2cea1bdee5ec177f9d7ad4ad54a990e7611d3d",
+      "size_bytes": 2917062,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "tracking/demo-21-details.png",
+      "description": "Historical DEMO-21 details",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image4.png",
+      "sha256": "761d22550b0162b6c2745ba0a290d6c82629366f339967e41731f4c2758c1f7b",
+      "size_bytes": 324126,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "tracking/demo-22-details.png",
+      "description": "Historical DEMO-22 details and three commit links",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image5.png",
+      "sha256": "02efbc77d312d0664aab736ab543dcfcfb395ec567793e614ef0413187211343",
+      "size_bytes": 367662,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "tracking/demo-23-details.png",
+      "description": "Historical DEMO-23 details and two commit links",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image6.png",
+      "sha256": "816b2afeab606579eed463c9747a7336f194a7e7fd28107cfec4f957c0ae8d36",
+      "size_bytes": 359285,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "tracking/demo-24-details.png",
+      "description": "Historical DEMO-24 details and three commit links",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image7.png",
+      "sha256": "e3dd58dd2080eed093f4800c6e019584a40f7bf18ee1f1415373e2b6dc3eee74",
+      "size_bytes": 374552,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "tracking/pr-2-historical.png",
+      "description": "Historical PR 2 page",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image8.png",
+      "sha256": "f1f4890390109642ae7cfa8860cf596079cca6bfbedca91a2db9b6a2c8d16c1c",
+      "size_bytes": 132066,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    },
+    {
+      "file": "tracking/pr-1-historical.png",
+      "description": "Historical PR 1 page; merge is not independent review approval",
+      "source_document": "YouTrack Board.docx",
+      "source_document_sha256": "059dbb6f82fee4d7cf5281bd4a94067ca457bf2dec6c61afb8be41d20114150b",
+      "source_member": "word/media/image9.png",
+      "sha256": "443b364fac1644386084d6ef82c4466e852a2dfdfe8171465cee7342b44b36ed",
+      "size_bytes": 141645,
+      "extracted_at_utc": "2026-10-24T10:30:36.095681+00:00",
+      "original_capture_time": null,
+      "status": "Original image bytes extracted without modification. Historical image; capture timestamp not independently established."
+    }
+  ],
+  "source_pdf": {
+    "file": "tracking/YouTrack_Board.pdf",
+    "sha256": "5338f24b71e74b8cb81105dfbb03d09022e0a556bd1140f7f7e7e7088ce68cab",
+    "status": "Unchanged copy of the supplied local PDF."
+  },
+  "current_task_observations": "task-register.json",
+  "ci_run": "https://github.com/Roma1413/Auction_app/actions/runs/39660804027",
+  "ci_evidence": "Success supplied by the team and CI URL verified in current DEMO-20 description; full job logs not inspected here.",
+  "review_limit": "Historical PR screenshots/merge do not establish independent pre-merge teammate approval."
+}

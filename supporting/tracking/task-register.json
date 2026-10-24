@@ -1,0 +1,114 @@
+{
+  "assembled_at_utc": "2026-10-24T10:30:36.095681+00:00",
+  "tasks": [
+    {
+      "id": "DEMO-20",
+      "title": "Set Up CI/CD, Health Checks, and QA Documentation",
+      "owner_team_confirmed": "Nurbak Bektasov",
+      "assignee_displayed": "admin",
+      "priority_displayed": "Неотложная",
+      "date_team_reported": "2026-10-21",
+      "due_date_visible_in_description": "2026-10-22",
+      "activity_date_field_text": "Дата завершения: 22 окт. 2026",
+      "links": [
+        "https://github.com/Roma1413/Auction_app/pull/1",
+        "https://github.com/Roma1413/Auction_app/actions/runs/39660804027"
+      ],
+      "scope_visible": "CI; liveness/readiness; read-only smoke check; QA and operations documentation.",
+      "acceptance_criteria_summary": "PR/push workflow, successful CI link, no production test DB, readiness/liveness behavior, smoke failure/timeout, automated tests, README, QA plan, verification record, teammate review.",
+      "discrepancy": "Team-reported 21 October differs from the currently observed description: October 22. No task was edited.",
+      "review_note": "Historical visible task comment says Awaiting teammate review.",
+      "url": "https://auctionapp.youtrack.cloud/issue/DEMO-20",
+      "observed_on": "2026-10-24",
+      "state_displayed": "Готово (Done)",
+      "evidence_kind": "Structured summary/transcription of browser-visible task fields; not an API export.",
+      "deadline_field_verified": false
+    },
+    {
+      "id": "DEMO-21",
+      "title": "Fix lint warnings in the backend",
+      "owner_team_confirmed": "Nurbak Bektasov",
+      "assignee_displayed": "admin",
+      "priority_displayed": "Обычная",
+      "date_team_reported": "2026-10-23",
+      "activity_date_field_text": "Дата завершения: 23 окт. 2026",
+      "links": [
+        "https://github.com/Roma1413/Auction_app/pull/2"
+      ],
+      "scope_visible": "Remove lint warnings while preserving behavior.",
+      "acceptance_criteria_summary": "Resolve unused catch warning; review remaining warnings; npm run check passes; PR and teammate review.",
+      "task_reported_results": "0 lint warnings/errors, frontend/backend builds passed; docs/test-results.md. Not rerun for this package.",
+      "url": "https://auctionapp.youtrack.cloud/issue/DEMO-21",
+      "observed_on": "2026-10-24",
+      "state_displayed": "Готово (Done)",
+      "evidence_kind": "Structured summary/transcription of browser-visible task fields; not an API export.",
+      "deadline_field_verified": false
+    },
+    {
+      "id": "DEMO-22",
+      "title": "Implement AuctionPro marketplace, backend and database",
+      "owner_team_confirmed": "Ramazan Arinov",
+      "assignee_displayed": "arinovramazan0101",
+      "priority_displayed": "Неотложная",
+      "date_team_reported": "2026-10-10",
+      "links": [
+        "https://github.com/Roma1413/Auction_app/commit/e81e1fb6c99dda705e43b7b1ae766cf3f191b936",
+        "https://github.com/Roma1413/Auction_app/commit/5e8e8d9e741ad74e6773db85800b36780fd65780",
+        "https://github.com/Roma1413/Auction_app/commit/09f3a54ac48b293fbc10b6eb9dda110abbfbfbef"
+      ],
+      "scope_visible": "Marketplace, account interfaces, backend API, database, listings and bids.",
+      "acceptance_criteria_summary": "Registration/login interfaces, listing/item browsing, persisted auction/bid data, frontend/API communication.",
+      "url": "https://auctionapp.youtrack.cloud/issue/DEMO-22",
+      "observed_on": "2026-10-24",
+      "state_displayed": "Готово (Done)",
+      "evidence_kind": "Structured summary/transcription of browser-visible task fields; not an API export.",
+      "deadline_field_verified": false,
+      "tracking_note_visible": "Recorded retrospectively after implementation. Original implementation dates are preserved in Git history.",
+      "date_entry_team_reported": "Dates entered retrospectively on 24 October 2026; they do not establish deadlines assigned in advance."
+    },
+    {
+      "id": "DEMO-23",
+      "title": "Add Seller Auction Controls and Improve API Error Handling",
+      "owner_team_confirmed": "Ramazan Arinov",
+      "assignee_displayed": "arinovramazan0101",
+      "priority_displayed": "Обычная",
+      "date_team_reported": "2026-10-12",
+      "links": [
+        "https://github.com/Roma1413/Auction_app/commit/6314cbda7472b9f2cfe280b6821b6c27f3778a97",
+        "https://github.com/Roma1413/Auction_app/commit/ad38845c655e535f180d2660840038f9535d1b25"
+      ],
+      "scope_visible": "Seller cancellation/early acceptance, API error handling, updated auction state.",
+      "acceptance_criteria_summary": "Cancel own eligible auctions, accept highest eligible bid, reject unauthorized actions, refresh state, handle unexpected HTML API responses.",
+      "url": "https://auctionapp.youtrack.cloud/issue/DEMO-23",
+      "observed_on": "2026-10-24",
+      "state_displayed": "Готово (Done)",
+      "evidence_kind": "Structured summary/transcription of browser-visible task fields; not an API export.",
+      "deadline_field_verified": false,
+      "tracking_note_visible": "Recorded retrospectively after implementation. Original implementation dates are preserved in Git history.",
+      "date_entry_team_reported": "Dates entered retrospectively on 24 October 2026; they do not establish deadlines assigned in advance."
+    },
+    {
+      "id": "DEMO-24",
+      "title": "Improve Mobile Experience and Configure Render Deployment",
+      "owner_team_confirmed": "Ramazan Arinov",
+      "assignee_displayed": "arinovramazan0101",
+      "priority_displayed": "Обычная",
+      "date_team_reported": "2026-10-12",
+      "links": [
+        "https://github.com/Roma1413/Auction_app/commit/4992c9f4368b7635c51423687020ac6baf62734d",
+        "https://github.com/Roma1413/Auction_app/commit/7c0480107f5d4dcd82f4ff7286af7aea1768052e",
+        "https://github.com/Roma1413/Auction_app/commit/4f810928f314f0e588cc8340eb077fe8959f0d6d"
+      ],
+      "scope_visible": "PWA support, Render configuration, camera/gallery input, phone layout.",
+      "acceptance_criteria_summary": "Install support, Render config, mobile photo selection, responsive navigation/panels.",
+      "url": "https://auctionapp.youtrack.cloud/issue/DEMO-24",
+      "observed_on": "2026-10-24",
+      "state_displayed": "Готово (Done)",
+      "evidence_kind": "Structured summary/transcription of browser-visible task fields; not an API export.",
+      "deadline_field_verified": false,
+      "tracking_note_visible": "Recorded retrospectively after implementation. Original implementation dates are preserved in Git history.",
+      "date_entry_team_reported": "Dates entered retrospectively on 24 October 2026; they do not establish deadlines assigned in advance."
+    }
+  ],
+  "limit": "Date fields were not confirmed in the observed sidebars. Activity date labels and team-reported dates are recorded separately. Descriptions/criteria are observations, not independent proof they were fulfilled."
+}
